@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O'77 — Street Food | Pontault-Combault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['"Oswald"', 'sans-serif'],
+                        body: ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+        ::selection { background: rgba(255,214,0,0.3); color: #fff; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #FFD600; }
+
+        :root {
+            --jaune: #FFD600;
+            --jaune-light: #FFEB80;
+            --noir-card: #111111;
+            --noir-border: #1c1c1c;
+            --gris: #888888;
+            --gris-clair: #cccccc;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .anim-up { animation: fadeInUp 0.6s ease both; }
+        .anim-d1 { animation-delay: 0.1s; }
+        .anim-d2 { animation-delay: 0.2s; }
+        .anim-d3 { animation-delay: 0.3s; }
+
+        .btn-jaune {
+            background: var(--jaune); color: #000; font-family: 'Oswald', sans-serif;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+            font-size: 0.85rem; padding: 14px 36px; border: none; cursor: pointer;
+            transition: all 0.2s ease; display: inline-block; text-decoration: none;
+        }
+        .btn-jaune:hover { background: var(--jaune-light); transform: translateY(-2px); box-shadow: 0 6px 30px rgba(255,214,0,0.25); }
+
+        .btn-outline {
+            background: transparent; color: var(--jaune); font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+            font-size: 0.85rem; padding: 13px 36px; border: 2px solid var(--jaune);
+            cursor: pointer; transition: all 0.2s ease; display: inline-block; text-decoration: none;
+        }
+        .btn-outline:hover { background: var(--jaune); color: #000; }
+
+        .nav-link { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; position: relative; }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--jaune); transition: width 0.3s; }
+        .nav-link:hover::after { width: 100%; }
+
+        .form-input {
+            background: #111; border: 1px solid #1c1c1c; color: #fff;
+            padding: 14px 16px; font-family: 'Inter', sans-serif; font-size: 13px;
+            width: 100%; transition: border-color 0.3s; outline: none;
+        }
+        .form-input:focus { border-color: var(--jaune); }
+        .form-input::placeholder { color: #555; }
+
+        .product-card { transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(255,214,0,0.08); }
+
+        .masonry { columns: 3; column-gap: 10px; }
+        .masonry-item { break-inside: avoid; margin-bottom: 10px; overflow: hidden; position: relative; }
+        .masonry-item img { width: 100%; display: block; transition: transform 0.5s; }
+        .masonry-item:hover img { transform: scale(1.05); }
+        .masonry-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; justify-content: center; }
+        .masonry-item:hover .masonry-overlay { opacity: 1; }
+        @media (max-width: 1024px) { .masonry { columns: 2; } }
+        @media (max-width: 640px) { .masonry { columns: 2; column-gap: 6px; } .masonry-item { margin-bottom: 6px; } }
+
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .modal-bg.open { display: flex; }
+        .modal-box { background: #0a0a0a; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; animation: fadeInUp 0.3s ease; }
+
+        .cart-panel { position: fixed; top: 0; right: 0; width: 400px; max-width: 92vw; height: 100vh; background: #0a0a0a; z-index: 90; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); overflow-y: auto; border-left: 2px solid var(--jaune); }
+        .cart-panel.open { transform: translateX(0); }
+        .cart-dim { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 85; display: none; }
+        .cart-dim.open { display: block; }
+
+        .mobile-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 80; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; }
+        .mobile-panel.open { display: flex; animation: fadeIn 0.3s ease; }
+
+        .toast-msg { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120px); background: var(--jaune); color: #000; padding: 12px 28px; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; z-index: 200; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); pointer-events: none; }
+        .toast-msg.show { transform: translateX(-50%) translateY(0); }
+
+        .marquee-inner { display: flex; width: max-content; animation: marquee 25s linear infinite; }
+
+        .fbtn { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.06em; transition: all 0.2s; cursor: pointer; }
+        .fbtn.on { background: var(--jaune) !important; color: #000 !important; border-color: var(--jaune) !important; }
+
+        .qbtn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid #333; background: transparent; color: #fff; cursor: pointer; transition: all 0.2s; font-size: 16px; font-weight: 700; }
+        .qbtn:hover { border-color: var(--jaune); color: var(--jaune); }
+
+        .sauce { padding: 8px 16px; font-size: 11px; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.06em; border: 1px solid #333; color: #888; background: transparent; cursor: pointer; transition: all 0.2s; }
+        .sauce:hover { border-color: var(--jaune); color: var(--jaune); }
+        .sauce.picked { border-color: var(--jaune); color: var(--jaune); background: rgba(255,214,0,0.1); }
+
+        .g-badge { background: rgba(255,214,0,0.06); border: 1px solid rgba(255,214,0,0.15); }
+
+        .reveal { opacity: 0; transform: translateY(35px); transition: all 0.7s ease; }
+        .reveal.vis { opacity: 1; transform: translateY(0); }
+
+        .map-wrap { filter: grayscale(1) invert(1) contrast(0.8); }
+
+        @media (max-width: 768px) {
+            .hero-big { font-size: 2.8rem !important; }
+        }
+        @media(min-width:1024px){ #deskNav{display:flex!important} #mobBtn{display:none!important} }
+        @media(max-width:1023px){ #deskNav{display:none!important} #mobBtn{display:block!important} .bs-grid{grid-template-columns:repeat(2,1fr)!important} .shop-g{grid-template-columns:repeat(2,1fr)!important} .hist-grid{grid-template-columns:1fr!important} .resa-grid{grid-template-columns:1fr!important} .foot-grid{grid-template-columns:1fr 1fr!important} .val-grid{grid-template-columns:1fr!important} .badge-tag{display:inline!important} }
+        @media(max-width:640px){ .bs-grid{grid-template-columns:1fr!important} .shop-g{grid-template-columns:1fr 1fr!important} .hero-big{font-size:2.5rem!important} .foot-grid{grid-template-columns:1fr!important} .modal-grid{grid-template-columns:1fr!important} .modal-img{height:220px!important} }
+    </style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast" class="toast-msg"></div>
+
+<!-- Cart overlay -->
+<div id="cartDim" class="cart-dim" onclick="cartToggle()"></div>
+
+<!-- Cart panel -->
+<div id="cartPanel" class="cart-panel">
+    <div style="padding:24px;border-bottom:1px solid #1c1c1c;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:'Oswald';font-size:1.4rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em;font-weight:700">Panier</span>
+        <button onclick="cartToggle()" style="background:none;border:none;color:#888;cursor:pointer;font-size:24px">✕</button>
+    </div>
+    <div id="cartContent" style="padding:24px">
+        <div id="cartEmpty" style="text-align:center;padding:60px 0">
+            <div style="font-size:48px;opacity:0.15">🛒</div>
+            <p style="margin-top:16px;color:#888;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.1em;font-size:0.85rem">Panier vide</p>
+        </div>
+        <div id="cartList" style="display:none"></div>
+    </div>
+    <div id="cartFoot" style="padding:24px;border-top:2px solid rgba(255,214,0,0.2);display:none">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:#888;font-size:0.85rem">Sous-total</span><span id="cartSub" style="font-weight:600">0,00 €</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:24px"><span style="color:#888;font-size:0.85rem">Livraison</span><span style="color:#FFD600;font-family:'Oswald';text-transform:uppercase;font-size:0.85rem">Gratuite</span></div>
+        <div style="display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid #1c1c1c;margin-bottom:24px"><span style="font-family:'Oswald';font-size:1.1rem;text-transform:uppercase">Total</span><span id="cartTot" style="font-family:'Oswald';font-size:1.8rem;color:#FFD600">0,00 €</span></div>
+        <button class="btn-jaune" style="width:100%;text-align:center" onclick="toast('Commande envoyée ! 🎉')">Valider</button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal-bg" onclick="if(event.target===this)modalClose()">
+    <div class="modal-box">
+        <div style="display:grid;grid-template-columns:1fr 1fr" class="modal-grid">
+            <div style="position:relative;overflow:hidden;background:#111">
+                <img id="mImg" src="" alt="" style="width:100%;height:300px;object-fit:cover" class="modal-img">
+            </div>
+            <div style="padding:32px;display:flex;flex-direction:column">
+                <button onclick="modalClose()" style="align-self:flex-end;background:none;border:none;color:#888;cursor:pointer;font-size:20px;margin-bottom:16px">✕</button>
+                <span id="mCat" style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px"></span>
+                <h2 id="mTitle" style="font-family:'Oswald';font-size:1.6rem;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:12px"></h2>
+                <p id="mDesc" style="color:#888;font-size:0.85rem;line-height:1.7;margin-bottom:24px"></p>
+                <div id="mPrice" style="font-family:'Oswald';font-size:2.2rem;color:#FFD600;margin-bottom:24px"></div>
+                <div style="margin-bottom:20px">
+                    <span style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:10px">Sauces</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px" id="mSauces"></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px">
+                    <span style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc">Qté</span>
+                    <div style="display:flex;align-items:center;border:1px solid #333">
+                        <button class="qbtn" onclick="mQty(-1)">−</button>
+                        <span id="mQtyEl" style="width:40px;text-align:center;font-weight:700;font-size:0.9rem">1</span>
+                        <button class="qbtn" onclick="mQty(1)">+</button>
+                    </div>
+                </div>
+                <button id="mAdd" class="btn-jaune" style="width:100%;text-align:center;margin-top:auto">Ajouter au panier</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile menu -->
+<div id="mobMenu" class="mobile-panel">
+    <button onclick="mobToggle()" style="position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;cursor:pointer;font-size:28px">✕</button>
+    <a onclick="go('home');mobToggle()" style="font-family:'Oswald';font-size:2rem;color:#fff;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;text-decoration:none">Accueil</a>
+    <a onclick="go('histoire');mobToggle()" style="font-family:'Oswald';font-size:2rem;color:#fff;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;text-decoration:none">Histoire</a>
+    <a onclick="go('galerie');mobToggle()" style="font-family:'Oswald';font-size:2rem;color:#fff;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;text-decoration:none">Galerie</a>
+    <a onclick="go('carte');mobToggle()" style="font-family:'Oswald';font-size:2rem;color:#fff;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;text-decoration:none">Carte</a>
+    <a onclick="go('reserver');mobToggle()" style="font-family:'Oswald';font-size:2rem;color:#fff;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;text-decoration:none">Réserver</a>
+    <div style="width:60px;height:2px;background:#FFD600;margin:8px 0"></div>
+    <button onclick="go('commander');mobToggle()" class="btn-jaune">Commander</button>
+</div>
+
+<!-- ========== HEADER ========== -->
+<header id="hdr" style="position:fixed;top:0;left:0;right:0;z-index:50;transition:all 0.3s;background:transparent">
+    <div style="max-width:1200px;margin:0 auto;padding:0 20px;height:72px;display:flex;align-items:center;justify-content:space-between">
+        <a onclick="go('home')" style="cursor:pointer;text-decoration:none">
+            <img src="logo.png" alt="O'77" style="height:52px;width:auto;display:block">
+        </a>
+        <nav style="display:none;align-items:center;gap:28px" id="deskNav">
+            <a onclick="go('histoire')" class="nav-link" style="font-size:0.75rem;font-weight:600;color:#ccc;cursor:pointer;text-decoration:none">Histoire</a>
+            <a onclick="go('galerie')" class="nav-link" style="font-size:0.75rem;font-weight:600;color:#ccc;cursor:pointer;text-decoration:none">Galerie</a>
+            <a onclick="go('carte')" class="nav-link" style="font-size:0.75rem;font-weight:600;color:#ccc;cursor:pointer;text-decoration:none">Carte</a>
+            <a onclick="go('reserver')" class="nav-link" style="font-size:0.75rem;font-weight:600;color:#ccc;cursor:pointer;text-decoration:none">Réserver</a>
+            <button onclick="go('commander')" class="btn-jaune" style="font-size:0.75rem;padding:10px 24px">Commander</button>
+        </nav>
+        <div style="display:flex;align-items:center;gap:16px">
+            <button onclick="cartToggle()" style="position:relative;background:none;border:none;color:#fff;cursor:pointer;font-size:20px">
+                🛒
+                <span id="cartBadge" style="position:absolute;top:-6px;right:-8px;min-width:18px;height:18px;background:#FFD600;color:#000;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center">0</span>
+            </button>
+            <button onclick="mobToggle()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:24px;display:none" id="mobBtn">☰</button>
+        </div>
+    </div>
+</header>
+
+<!-- ========== HOME ========== -->
+<section id="page-home" class="page active">
+
+    <!-- Hero -->
+    <div style="position:relative;min-height:100vh;display:flex;align-items:flex-end;padding-bottom:80px">
+        <img src="imagehero.png" alt="O'77 Street Food" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,#000 0%,rgba(0,0,0,0.6) 40%,rgba(0,0,0,0.15) 100%)"></div>
+        <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 20px;width:100%">
+            <div style="max-width:600px">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px" class="anim-up">
+                    <span style="width:30px;height:2px;background:#FFD600;display:block"></span>
+                    <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase">Street Food — Pontault-Combault</span>
+                </div>
+                <h1 class="hero-big anim-up anim-d1" style="font-family:'Oswald';font-size:4.5rem;text-transform:uppercase;line-height:0.95;letter-spacing:-0.02em;margin-bottom:20px">
+                    LE GOÛT<br>QUI <span style="color:#FFD600">DÉCHIRE</span>
+                </h1>
+                <p class="anim-up anim-d2" style="color:#ccc;font-size:1rem;line-height:1.7;margin-bottom:32px;max-width:420px">
+                    Sandwichs qui tuent. Pizzas qui déchirent. Ouvert jusqu'à 1h du mat'. <span style="color:#FFD600;font-weight:600">Pontault-Combault.</span>
+                </p>
+                <div style="display:flex;flex-wrap:wrap;gap:12px" class="anim-up anim-d3">
+                    <button onclick="go('carte')" class="btn-jaune">Voir la carte</button>
+                    <button onclick="go('commander')" class="btn-outline">Commander</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marquee -->
+    <div style="padding:12px 0;background:#FFD600;overflow:hidden">
+        <div class="marquee-inner">
+            <span style="font-family:'Oswald';color:#000;font-size:0.95rem;font-weight:700;white-space:nowrap;padding:0 24px">★ OUVERT 7J/7 JUSQU'À 1H ★ 5.0 GOOGLE REVIEWS ★ SANDWICHS ARTISANAUX ★ PIZZAS FEU DE BOIS ★ LIVRAISON UBER EATS & DELIVROO ★ PONTAULT-COMBAULT ★ O'77 ★</span>
+            <span style="font-family:'Oswald';color:#000;font-size:0.95rem;font-weight:700;white-space:nowrap;padding:0 24px">★ OUVERT 7J/7 JUSQU'À 1H ★ 5.0 GOOGLE REVIEWS ★ SANDWICHS ARTISANAUX ★ PIZZAS FEU DE BOIS ★ LIVRAISON UBER EATS & DELIVROO ★ PONTAULT-COMBAULT ★ O'77 ★</span>
+        </div>
+    </div>
+
+    <!-- Google badge -->
+    <div style="padding:24px 0;border-bottom:1px solid #1c1c1c">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div class="g-badge" style="display:inline-flex;align-items:center;gap:14px;padding:12px 20px">
+                <div style="display:flex;gap:2px"><span style="color:#FFD600;font-size:16px">★★★★★</span></div>
+                <span style="font-weight:700;font-size:0.85rem">5,0/5</span>
+                <span style="color:#888;font-size:0.75rem">Google Reviews (21 avis)</span>
+                <span style="display:none;color:#FFD600;font-size:0.7rem;font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:0.1em" class="badge-tag">#1 de la ville</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Best sellers -->
+    <div style="padding:80px 0" class="reveal">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div style="margin-bottom:48px">
+                <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:8px">Les Incontournables</span>
+                <h2 style="font-family:'Oswald';font-size:2.8rem;text-transform:uppercase;letter-spacing:-0.01em">Best-Sellers</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" class="bs-grid">
+                <div class="product-card" style="background:#111;border:1px solid #1c1c1c;overflow:hidden" onclick="modalOpen(0)">
+                    <div style="position:relative;overflow:hidden">
+                        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=450&fit=crop&crop=center" alt="Naan Cheesy" style="width:100%;height:220px;object-fit:cover;display:block;transition:transform 0.5s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                        <span style="position:absolute;top:12px;left:12px;background:#FFD600;color:#000;font-size:10px;font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:4px 12px">🔥 Best</span>
+                    </div>
+                    <div style="padding:20px">
+                        <h3 style="font-family:'Oswald';font-size:1.1rem;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:4px">Naan Cheesy O'77</h3>
+                        <p style="color:#888;font-size:0.75rem;margin-bottom:16px">Naan artisanal, fromage fondu, sauce secrète</p>
+                        <div style="display:flex;align-items:center;justify-content:space-between">
+                            <span style="font-family:'Oswald';font-size:1.5rem;color:#FFD600">12,90 €</span>
+                            <span style="width:34px;height:34px;background:rgba(255,214,0,0.1);border:1px solid rgba(255,214,0,0.3);display:flex;align-items:center;justify-content:center;color:#FFD600;font-size:18px">+</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" style="background:#111;border:1px solid #1c1c1c;overflow:hidden" onclick="modalOpen(2)">
+                    <div style="position:relative;overflow:hidden">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=450&fit=crop&crop=center" alt="Burger" style="width:100%;height:220px;object-fit:cover;display:block;transition:transform 0.5s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                        <span style="position:absolute;top:12px;left:12px;background:#fff;color:#000;font-size:10px;font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:4px 12px">Nouveau</span>
+                    </div>
+                    <div style="padding:20px">
+                        <h3 style="font-family:'Oswald';font-size:1.1rem;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:4px">Burger O'77</h3>
+                        <p style="color:#888;font-size:0.75rem;margin-bottom:16px">Bœuf premium, cheddar, oignons caramélisés</p>
+                        <div style="display:flex;align-items:center;justify-content:space-between">
+                            <span style="font-family:'Oswald';font-size:1.5rem;color:#FFD600">13,90 €</span>
+                            <span style="width:34px;height:34px;background:rgba(255,214,0,0.1);border:1px solid rgba(255,214,0,0.3);display:flex;align-items:center;justify-content:center;color:#FFD600;font-size:18px">+</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" style="background:#111;border:1px solid #1c1c1c;overflow:hidden" onclick="modalOpen(1)">
+                    <div style="position:relative;overflow:hidden">
+                        <img src="https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=450&fit=crop&crop=center" alt="Poulet" style="width:100%;height:220px;object-fit:cover;display:block;transition:transform 0.5s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>
+                    <div style="padding:20px">
+                        <h3 style="font-family:'Oswald';font-size:1.1rem;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:4px">Naan Poulet Croquant</h3>
+                        <p style="color:#888;font-size:0.75rem;margin-bottom:16px">Poulet pané maison, salade, sauce caésar</p>
+                        <div style="display:flex;align-items:center;justify-content:space-between">
+                            <span style="font-family:'Oswald';font-size:1.5rem;color:#FFD600">11,90 €</span>
+                            <span style="width:34px;height:34px;background:rgba(255,214,0,0.1);border:1px solid rgba(255,214,0,0.3);display:flex;align-items:center;justify-content:center;color:#FFD600;font-size:18px">+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histoire aperçu -->
+    <div style="padding:80px 0;border-top:1px solid #1c1c1c" class="reveal">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center" class="hist-grid">
+                <div style="position:relative">
+                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&h=850&fit=crop" alt="Coulisses" style="width:100%;height:420px;object-fit:cover;display:block">
+                    <div style="position:absolute;bottom:-12px;right:-12px;background:#FFD600;color:#000;font-family:'Oswald';font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;padding:10px 20px">Depuis 2026</div>
+                </div>
+                <div>
+                    <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:12px">Notre Story</span>
+                    <h2 style="font-family:'Oswald';font-size:2.8rem;text-transform:uppercase;margin-bottom:20px;letter-spacing:-0.01em">Pas juste<br>du fast-food.</h2>
+                    <p style="color:#888;font-size:0.85rem;line-height:2;margin-bottom:28px">O'77 c'est le spot où le naan est pétri à la main, où le poulet est pané maison, où chaque sauce est notre créa. Pas de chaines industrielles. Juste du bon, du frais, du lourd. Ouvert jusqu'à 1h du mat' parce que la faim elle dort jamais.</p>
+                    <button onclick="go('histoire')" class="btn-outline">Lire l'histoire</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Livraison -->
+    <div style="padding:64px 0;border-top:1px solid #1c1c1c" class="reveal">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px;text-align:center">
+            <span style="color:#888;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:28px">Disponible en livraison</span>
+            <div style="display:flex;align-items:center;justify-content:center;gap:48px">
+                <a href="https://www.ubereats.com" target="_blank" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <iconify-icon icon="simple-icons:ubereats" width="36" style="color:#888"></iconify-icon>
+                    <span style="font-size:9px;color:#555;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.1em">Uber Eats</span>
+                </a>
+                <div style="width:1px;height:40px;background:#1c1c1c"></div>
+                <a href="https://www.deliveroo.fr" target="_blank" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <iconify-icon icon="simple-icons:deliveroo" width="36" style="color:#888"></iconify-icon>
+                    <span style="font-size:9px;color:#555;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.1em">Deliveroo</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!-- ========== HISTOIRE ========== -->
+<section id="page-histoire" class="page">
+    <div style="padding:120px 0 80px">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div style="max-width:700px;margin-bottom:80px" class="reveal">
+                <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:16px">Notre Story</span>
+                <h1 style="font-family:'Oswald';font-size:4rem;text-transform:uppercase;line-height:0.95;letter-spacing:-0.02em;margin-bottom:20px">NÉ DANS<br>LA <span style="color:#FFD600">RUE</span></h1>
+                <div style="width:60px;height:3px;background:#FFD600"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-bottom:80px;align-items:center" class="hist-grid reveal">
+                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&h=900&fit=crop" alt="Cuisine" style="width:100%;height:450px;object-fit:cover;display:block">
+                <div>
+                    <h2 style="font-family:'Oswald';font-size:1.6rem;color:#FFD600;text-transform:uppercase;margin-bottom:20px">Le début</h2>
+                    <p style="color:#888;font-size:0.85rem;line-height:2;margin-bottom:16px">O'77, c'est parti d'un truc simple : on en avait marre des fast-foods sans âme. Des sandwichs industriels, des pizzas qui ont voyagé 3 jours en camion, des sauces en sachet.</p>
+                    <p style="color:#888;font-size:0.85rem;line-height:2">Alors on a ouvert au 146 Avenue Charles Rouxel, à Pontault-Combault. Naans pétris main, poulet pané maison, sauces 100% créa. Ouvert 7j/7, jusqu'à 1h du mat', parce que la night hunger c'est réel.</p>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="reveal val-grid">
+                <div style="background:#111;border:1px solid #1c1c1c;padding:40px 28px;text-align:center;transition:border-color 0.3s" onmouseover="this.style.borderColor='rgba(255,214,0,0.3)'" onmouseout="this.style.borderColor='#1c1c1c'">
+                    <span style="font-size:28px;display:block;margin-bottom:16px">🔥</span>
+                    <h3 style="font-family:'Oswald';font-size:1.2rem;text-transform:uppercase;margin-bottom:12px">Fait Maison</h3>
+                    <p style="color:#888;font-size:0.75rem;line-height:1.8">Naans pétris à la commande, sauces 100% créa, panures maison. Zéro industriel.</p>
+                </div>
+                <div style="background:#111;border:1px solid #1c1c1c;padding:40px 28px;text-align:center;transition:border-color 0.3s" onmouseover="this.style.borderColor='rgba(255,214,0,0.3)'" onmouseout="this.style.borderColor='#1c1c1c'">
+                    <span style="font-size:28px;display:block;margin-bottom:16px">🥬</span>
+                    <h3 style="font-family:'Oswald';font-size:1.2rem;text-transform:uppercase;margin-bottom:12px">Frais Toujours</h3>
+                    <p style="color:#888;font-size:0.75rem;line-height:1.8">Produits livrés chaque matin, rien de congelé. La qualité c'est non-négociable.</p>
+                </div>
+                <div style="background:#111;border:1px solid #1c1c1c;padding:40px 28px;text-align:center;transition:border-color 0.3s" onmouseover="this.style.borderColor='rgba(255,214,0,0.3)'" onmouseout="this.style.borderColor='#1c1c1c'">
+                    <span style="font-size:28px;display:block;margin-bottom:16px">🌙</span>
+                    <h3 style="font-family:'Oswald';font-size:1.2rem;text-transform:uppercase;margin-bottom:12px">Night Food</h3>
+                    <p style="color:#888;font-size:0.75rem;line-height:1.8">Ouvert jusqu'à 1h du mat'. Parce que la faim, elle a pas d'heure.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== GALERIE ========== -->
+<section id="page-galerie" class="page">
+    <div style="padding:120px 0 80px">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div style="text-align:center;margin-bottom:56px" class="reveal">
+                <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:12px">Galerie</span>
+                <h1 style="font-family:'Oswald';font-size:4rem;text-transform:uppercase;letter-spacing:-0.02em">FOOD PORN</h1>
+            </div>
+            <div class="masonry reveal">
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&h=600&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Naan Cheesy</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&h=380&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Frites</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1551782450-17144efb9c50?w=500&h=500&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Poulet</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&h=620&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">En Cuisine</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=480&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Burger</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=380&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Le Spot</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1528735602780-2552fd9c8074?w=500&h=520&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Sandwich</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&h=580&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Milkshake</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=400&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Veggie</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1562967914-608f82629710?w=500&h=420&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Nuggets</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=500&h=500&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Limonade</span></div></div>
+                <div class="masonry-item"><img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500&h=460&fit=crop" alt=""><div class="masonry-overlay"><span style="font-family:'Oswald';font-size:1.1rem;color:#FFD600;text-transform:uppercase;letter-spacing:0.06em">Signature</span></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== CARTE ========== -->
+<section id="page-carte" class="page">
+    <div style="padding:120px 0 80px">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div style="text-align:center;margin-bottom:64px" class="reveal">
+                <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:12px">La Carte</span>
+                <h1 style="font-family:'Oswald';font-size:4rem;text-transform:uppercase;letter-spacing:-0.02em">NOS SAVEURS</h1>
+            </div>
+            <div id="menuContainer"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== RESERVER ========== -->
+<section id="page-reserver" class="page">
+    <div style="padding:120px 0 80px">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div style="max-width:700px;margin-bottom:64px" class="reveal">
+                <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:16px">Réservation</span>
+                <h1 style="font-family:'Oswald';font-size:4rem;text-transform:uppercase;line-height:0.95;letter-spacing:-0.02em">RÉSERVE<br>Ta <span style="color:#FFD600">TABLE</span></h1>
+            </div>
+            <div style="display:grid;grid-template-columns:3fr 2fr;gap:60px" class="resa-grid">
+                <div>
+                    <form id="resaForm" onsubmit="resaSubmit(event)" class="reveal">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+                            <div><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Prénom</label><input type="text" class="form-input" placeholder="Ton prénom" required></div>
+                            <div><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Nom</label><input type="text" class="form-input" placeholder="Ton nom" required></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+                            <div><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Email</label><input type="email" class="form-input" placeholder="email@example.com" required></div>
+                            <div><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Téléphone</label><input type="tel" class="form-input" placeholder="06 XX XX XX XX" required></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+                            <div><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Date</label><input type="date" class="form-input" required></div>
+                            <div><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Heure</label><select class="form-input" required><option value="">Choisir</option><option>11:00</option><option>11:30</option><option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option><option>14:00</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option><option>22:00</option><option>22:30</option><option>23:00</option><option>23:30</option><option>00:00</option><option>00:30</option></select></div>
+                            <div><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Personnes</label><select class="form-input" required><option value="">Choisir</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7+</option></select></div>
+                        </div>
+                        <div style="margin-bottom:24px"><label style="font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ccc;display:block;margin-bottom:8px">Message (optionnel)</label><textarea class="form-input" rows="3" placeholder="Allergies, anniversaire, préférences..."></textarea></div>
+                        <button type="submit" class="btn-jaune">Réserver</button>
+                    </form>
+                    <div id="resaOk" style="display:none;margin-top:24px;padding:20px;background:rgba(255,214,0,0.08);border:2px solid rgba(255,214,0,0.25)">
+                        <span style="font-size:24px">✅</span>
+                        <div style="margin-top:8px"><strong style="font-family:'Oswald';font-size:1.1rem;text-transform:uppercase">C'est bon ! 🎉</strong><p style="color:#888;font-size:0.8rem;margin-top:4px">Confirmation par email sous 2h.</p></div>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <div style="margin-bottom:32px">
+                        <h3 style="font-family:'Oswald';font-size:1.2rem;color:#FFD600;text-transform:uppercase;margin-bottom:16px">Horaires</h3>
+                        <div style="background:#111;border:1px solid #1c1c1c;padding:20px">
+                            <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:8px"><span style="color:#888">Lundi — Dimanche</span><span style="font-weight:600">11h — 01h</span></div>
+                            <div style="display:flex;align-items:center;gap:8px;padding-top:12px;border-top:1px solid #1c1c1c;margin-top:12px">
+                                <span id="openDot" style="width:8px;height:8px;border-radius:50%;background:#22c55e;animation:blink 2s infinite"></span>
+                                <span id="openTxt" style="font-size:0.7rem;font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4ade80">Ouvert</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:32px">
+                        <h3 style="font-family:'Oswald';font-size:1.2rem;color:#FFD600;text-transform:uppercase;margin-bottom:16px">On est où</h3>
+                        <p style="color:#888;font-size:0.85rem;margin-bottom:12px">146 Av. Charles Rouxel<br>77340 Pontault-Combault</p>
+                        <div class="map-wrap" style="overflow:hidden"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2629.8!2d2.6029!3d48.7915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e60d4a0c8cdeaf%3A0x0!2s146+Av+Charles+Rouxel%2C+77340+Pontault-Combault!5e0!3m2!1sfr!2sfr!4v1700000000000" width="100%" height="180" style="border:0;display:block" allowfullscreen loading="lazy"></iframe></div>
+                    </div>
+                    <div>
+                        <h3 style="font-family:'Oswald';font-size:1.2rem;color:#FFD600;text-transform:uppercase;margin-bottom:12px">Appelle-nous</h3>
+                        <a href="tel:0985002773" style="display:inline-flex;align-items:center;gap:12px;background:#111;border:1px solid #1c1c1c;padding:14px 20px;text-decoration:none;color:#fff;font-family:'Oswald';font-size:1.1rem;transition:border-color 0.3s" onmouseover="this.style.borderColor='#FFD600'" onmouseout="this.style.borderColor='#1c1c1c'">📞 09 85 00 27 73</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== COMMANDER ========== -->
+<section id="page-commander" class="page">
+    <div style="padding:120px 0 80px">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px">
+            <div style="margin-bottom:48px" class="reveal">
+                <span style="color:#FFD600;font-size:11px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-bottom:12px">Commander</span>
+                <h1 style="font-family:'Oswald';font-size:3.5rem;text-transform:uppercase;letter-spacing:-0.02em">COMPOSE TON REPAS</h1>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px" class="reveal" id="filterBar">
+                <button class="fbtn on" style="padding:10px 24px;font-size:0.8rem;font-weight:700;border:1px solid #1c1c1c;background:none;color:inherit" onclick="filterCat('all',this)">Tout</button>
+                <button class="fbtn" style="padding:10px 24px;font-size:0.8rem;font-weight:700;border:1px solid #1c1c1c;background:none;color:#888" onclick="filterCat('sandwich',this)">🍔 Sandwiches</button>
+                <button class="fbtn" style="padding:10px 24px;font-size:0.8rem;font-weight:700;border:1px solid #1c1c1c;background:none;color:#888" onclick="filterCat('side',this)">🍟 Accompagnements</button>
+                <button class="fbtn" style="padding:10px 24px;font-size:0.8rem;font-weight:700;border:1px solid #1c1c1c;background:none;color:#888" onclick="filterCat('drink',this)">🥤 Boissons</button>
+            </div>
+            <div id="shopGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px" class="reveal shop-g"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer style="border-top:2px solid rgba(255,214,0,0.15);background:#000">
+    <div style="max-width:1200px;margin:0 auto;padding:64px 20px">
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:40px" class="foot-grid">
+            <div>
+                <img src="logo.png" alt="O'77" style="height:56px;width:auto;display:block;margin-bottom:16px">
+                <p style="color:#888;font-size:0.75rem;line-height:1.9;max-width:260px;margin-top:12px">Street food qui déchire. Sandwichs artisanaux, produits frais. Ouvert jusqu'à 1h du mat'.</p>
+                <div style="display:flex;gap:8px;margin-top:20px">
+                    <a href="#" style="width:36px;height:36px;border:1px solid #1c1c1c;display:flex;align-items:center;justify-content:center;color:#888;text-decoration:none;transition:all 0.2s" onmouseover="this.style.borderColor='#FFD600';this.style.color='#FFD600'" onmouseout="this.style.borderColor='#1c1c1c';this.style.color='#888'"><iconify-icon icon="simple-icons:instagram" width="14"></iconify-icon></a>
+                    <a href="#" style="width:36px;height:36px;border:1px solid #1c1c1c;display:flex;align-items:center;justify-content:center;color:#888;text-decoration:none;transition:all 0.2s" onmouseover="this.style.borderColor='#FFD600';this.style.color='#FFD600'" onmouseout="this.style.borderColor='#1c1c1c';this.style.color='#888'"><iconify-icon icon="simple-icons:tiktok" width="14"></iconify-icon></a>
+                    <a href="#" style="width:36px;height:36px;border:1px solid #1c1c1c;display:flex;align-items:center;justify-content:center;color:#888;text-decoration:none;transition:all 0.2s" onmouseover="this.style.borderColor='#FFD600';this.style.color='#FFD600'" onmouseout="this.style.borderColor='#1c1c1c';this.style.color='#888'"><iconify-icon icon="simple-icons:snapchat" width="14"></iconify-icon></a>
+                </div>
+            </div>
+            <div>
+                <h4 style="color:#FFD600;font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:20px">Contact</h4>
+                <a href="https://maps.google.com/?q=146+Av+Charles+Rouxel+77340" target="_blank" style="display:flex;align-items:flex-start;gap:8px;color:#888;font-size:0.8rem;text-decoration:none;margin-bottom:12px;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">📍 146 Av. Charles Rouxel<br>77340 Pontault-Combault</a>
+                <a href="tel:0985002773" style="display:flex;align-items:center;gap:8px;color:#888;font-size:0.8rem;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">📞 09 85 00 27 73</a>
+            </div>
+            <div>
+                <h4 style="color:#FFD600;font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:20px">Horaires</h4>
+                <div style="font-size:0.8rem;margin-bottom:8px"><span style="color:#888">Lun — Dim</span> <span style="font-weight:600;margin-left:8px">11h — 01h</span></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:12px">
+                    <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;animation:blink 2s infinite"></span>
+                    <span style="font-size:0.7rem;font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#4ade80">Ouvert</span>
+                </div>
+            </div>
+            <div>
+                <h4 style="color:#FFD600;font-size:10px;font-family:'Oswald';font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:20px">Navigation</h4>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <a onclick="go('home')" style="color:#888;font-size:0.8rem;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#FFD600'" onmouseout="this.style.color='#888'">Accueil</a>
+                    <a onclick="go('histoire')" style="color:#888;font-size:0.8rem;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#FFD600'" onmouseout="this.style.color='#888'">Histoire</a>
+                    <a onclick="go('galerie')" style="color:#888;font-size:0.8rem;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#FFD600'" onmouseout="this.style.color='#888'">Galerie</a>
+                    <a onclick="go('carte')" style="color:#888;font-size:0.8rem;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#FFD600'" onmouseout="this.style.color='#888'">La Carte</a>
+                    <a onclick="go('reserver')" style="color:#888;font-size:0.8rem;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#FFD600'" onmouseout="this.style.color='#888'">Réserver</a>
+                    <a onclick="go('commander')" style="color:#888;font-size:0.8rem;font-family:'Oswald';text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#FFD600'" onmouseout="this.style.color='#888'">Commander</a>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:48px;padding-top:24px;border-top:1px solid #1c1c1c;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+            <span style="color:#333;font-size:0.7rem">© 2026 O'77 — Tous droits réservés</span>
+            <div class="g-badge" style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px">
+                <span style="color:#FFD600;font-size:12px">★★★★★</span>
+                <span style="font-size:0.65rem;color:#888;font-family:'Oswald';font-weight:700">5.0 GOOGLE</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+var P = [
+    {id:0,n:"Naan Cheesy O'77",d:"Naan artisanal doré, cheddar fondu coulant, sauce secrète O'77, oignons croustillants.",p:12.9,c:"sandwich",i:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=600&fit=crop&crop=center",b:"🔥 Best"},
+    {id:1,n:"Naan Poulet Croquant",d:"Poulet pané maison croustillant, salade fraîche, tomates, sauce caésar.",p:11.9,c:"sandwich",i:"https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=600&fit=crop"},
+    {id:2,n:"Burger O'77",d:"Bœuf haché premium 150g, cheddar affiné, oignons caramélisés, sauce burger maison.",p:13.9,c:"sandwich",i:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop",b:"Nouveau"},
+    {id:3,n:"Naan Veggie Premium",d:"Légumes grillés de saison, houmous maison crémeux, vinaigrette au sésame noir.",p:10.9,c:"sandwich",i:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=600&fit=crop"},
+    {id:4,n:"Wrap Signature",d:"Poulet rôti tendre, avocat frais, tomates confites, sauce yaourt-herbes.",p:10.9,c:"sandwich",i:"https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=600&fit=crop"},
+    {id:5,n:"Frites Maison",d:"Pommes de terre fraîches, double cuisson, sel de Guérande.",p:4.5,c:"side",i:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=600&fit=crop"},
+    {id:6,n:"Potatoes Épicées",d:"Pommes de terre grenaille rôties, épices maison, herbes fraîches.",p:5,c:"side",i:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=500&fit=crop"},
+    {id:7,n:"Nuggets Maison (x6)",d:"Poulet fermier, panure croustillante aux herbes de Provence.",p:6.9,c:"side",i:"https://images.unsplash.com/photo-1562967914-608f82629710?w=600&h=600&fit=crop"},
+    {id:8,n:"Salade César",d:"Romaine croquante, parmesan 24 mois, croûtons dorés, sauce César maison.",p:6.5,c:"side",i:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=500&fit=crop"},
+    {id:9,n:"Limonade Maison",d:"Citron pressé du jour, menthe fraîche, eau gazeuse, touche de sucre de canne.",p:4,c:"drink",i:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=600&h=600&fit=crop"},
+    {id:10,n:"Milkshake Vanille",d:"Glace artisanale, lait entier, gousse de vanille de Madagascar.",p:5.5,c:"drink",i:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&h=700&fit=crop"},
+    {id:11,n:"Ice Tea Pêche",d:"Thé noir infusé, pêche blanche, une pointe de sucre de canne.",p:3.5,c:"drink",i:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&h=600&fit=crop"},
+    {id:12,n:"Eau Minérale",d:"Source naturelle pure. Plate ou gazeuse.",p:2.5,c:"drink",i:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=600&h=600&fit=crop"}
+];
+
+var cart = [];
+var mQty = 1;
+var mId = null;
+var SAUCES = ["Algérienne","Mayo","Ketchup","Samouraï","Moutarde","BBQ"];
+
+function go(p) {
+    var pages = document.querySelectorAll('.page');
+    for (var i=0; i<pages.length; i++) pages[i].classList.remove('active');
+    var el = document.getElementById('page-' + p);
+    if (el) el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    updHdr();
+    setTimeout(doReveal, 200);
+    if (p === 'commander') renderShop('all');
+    if (p === 'carte') buildMenu();
+}
+
+function updHdr() {
+    var h = document.getElementById('hdr');
+    if (window.scrollY > 60) {
+        h.style.background = 'rgba(0,0,0,0.95)'; h.style.backdropFilter = 'blur(10px)'; h.style.borderBottom = '2px solid #FFD600';
+    } else {
+        var a = document.querySelector('.page.active');
+        if (a && a.id === 'page-home') {
+            h.style.background = 'transparent'; h.style.backdropFilter = 'none'; h.style.borderBottom = 'none';
+        } else {
+            h.style.background = 'rgba(0,0,0,0.95)'; h.style.backdropFilter = 'blur(10px)'; h.style.borderBottom = '2px solid #FFD600';
+        }
+    }
+}
+window.addEventListener('scroll', updHdr);
+
+function mobToggle() {
+    var m = document.getElementById('mobMenu');
+    m.classList.toggle('open');
+    document.body.style.overflow = m.classList.contains('open') ? 'hidden' : '';
+}
+
+function cartToggle() {
+    var p = document.getElementById('cartPanel');
+    var d = document.getElementById('cartDim');
+    p.classList.toggle('open');
+    d.classList.toggle('open');
+    document.body.style.overflow = p.classList.contains('open') ? 'hidden' : '';
+}
+
+function cartAdd(id, qty) {
+    qty = qty || 1;
+    var found = false;
+    for (var i=0; i<cart.length; i++) { if (cart[i].id === id) { cart[i].q += qty; found = true; break; } }
+    if (!found) cart.push({id:id, q:qty});
+    cartUpd();
+    toast(P[id].n + ' — Ajouté ! 🔥');
+}
+
+function cartRem(id) {
+    cart = cart.filter(function(x){return x.id !== id});
+    cartUpd();
+}
+
+function cartChg(id, d) {
+    for (var i=0; i<cart.length; i++) {
+        if (cart[i].id === id) { cart[i].q += d; if (cart[i].q <= 0) { cartRem(id); return; } break; }
+    }
+    cartUpd();
+}
+
+function cartUpd() {
+    var badge = document.getElementById('cartBadge');
+    var list = document.getElementById('cartList');
+    var empty = document.getElementById('cartEmpty');
+    var foot = document.getElementById('cartFoot');
+    var tot = 0;
+    for (var i=0; i<cart.length; i++) tot += cart[i].q;
+
+    if (tot > 0) {
+        badge.style.display = 'flex'; badge.textContent = tot;
+        empty.style.display = 'none'; list.style.display = 'block'; foot.style.display = 'block';
+    } else {
+        badge.style.display = 'none';
+        empty.style.display = 'block'; list.style.display = 'none'; foot.style.display = 'none';
+    }
+
+    var html = '';
+    var sub = 0;
+    for (var i=0; i<cart.length; i++) {
+        var pr = P[cart[i].id];
+        var line = pr.p * cart[i].q;
+        sub += line;
+        html += '<div style="display:flex;gap:14px;padding-bottom:14px;border-bottom:1px solid #1c1c1c;margin-bottom:14px">' +
+            '<img src="'+pr.i+'" style="width:56px;height:56px;object-fit:cover;flex-shrink:0">' +
+            '<div style="flex:1;min-width:0">' +
+            '<div style="font-weight:600;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+pr.n+'</div>' +
+            '<div style="font-family:Oswald;font-size:1.1rem;color:#FFD600;margin-top:2px">'+fmtP(line)+'</div>' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-top:8px">' +
+            '<button class="qbtn" style="width:26px;height:26px;font-size:13px" onclick="cartChg('+cart[i].id+',-1)">−</button>' +
+            '<span style="font-size:0.8rem;font-weight:700;width:20px;text-align:center">'+cart[i].q+'</span>' +
+            '<button class="qbtn" style="width:26px;height:26px;font-size:13px" onclick="cartChg('+cart[i].id+',1)">+</button>' +
+            '<button onclick="cartRem('+cart[i].id+')" style="margin-left:auto;background:none;border:none;color:#888;cursor:pointer;font-size:14px" onmouseover="this.style.color=\'#f87171\'" onmouseout="this.style.color=\'#888\'">🗑</button>' +
+            '</div></div></div>';
+    }
+    list.innerHTML = html;
+    document.getElementById('cartSub').textContent = fmtP(sub);
+    document.getElementById('cartTot').textContent = fmtP(sub);
+}
+
+function fmtP(v) { return v.toFixed(2).replace('.',',') + ' €'; }
+
+function modalOpen(id) {
+    mId = id; mQty = 1;
+    var pr = P[id];
+    document.getElementById('mImg').src = pr.i;
+    document.getElementById('mImg').alt = pr.n;
+    document.getElementById('mCat').textContent = pr.c === 'sandwich' ? 'Sandwich' : pr.c === 'side' ? 'Accompagnement' : 'Boisson';
+    document.getElementById('mTitle').textContent = pr.n;
+    document.getElementById('mDesc').textContent = pr.d;
+    document.getElementById('mPrice').textContent = fmtP(pr.p);
+    document.getElementById('mQtyEl').textContent = '1';
+
+    var sh = '';
+    for (var i=0; i<SAUCES.length; i++) {
+        sh += '<button class="sauce" onclick="this.classList.toggle(\'picked\')">'+SAUCES[i]+'</button>';
+    }
+    document.getElementById('mSauces').innerHTML = sh;
+
+    document.getElementById('mAdd').onclick = function() { cartAdd(mId, mQty); modalClose(); };
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function modalClose() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function mQty(d) {
+    mQty = Math.max(1, mQty + d);
+    document.getElementById('mQtyEl').textContent = mQty;
+    document.getElementById('mPrice').textContent = fmtP(P[mId].p * mQty);
+}
+
+function renderShop(cat) {
+    var grid = document.getElementById('shopGrid');
+    var items = cat === 'all' ? P : P.filter(function(x){return x.c === cat});
+    var html = '';
+    for (var i=0; i<items.length; i++) {
+        var pr = items[i];
+        html += '<div class="product-card" style="background:#111;border:1px solid #1c1c1c;overflow:hidden" onclick="modalOpen('+pr.id+')">' +
+            '<div style="position:relative;overflow:hidden">' +
+            '<img src="'+pr.i+'" alt="'+pr.n+'" style="width:100%;height:180px;object-fit:cover;display:block;transition:transform 0.5s" onmouseover="this.style.transform=\'scale(1.08)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
+            (pr.b ? '<span style="position:absolute;top:10px;left:10px;background:#FFD600;color:#000;font-size:9px;font-family:Oswald;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:3px 10px">'+pr.b+'</span>' : '') +
+            '</div><div style="padding:16px">' +
+            '<div style="font-family:Oswald;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:4px">'+pr.n+'</div>' +
+            '<div style="color:#888;font-size:0.7rem;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+pr.d+'</div>' +
+            '<div style="display:flex;align-items:center;justify-content:space-between">' +
+            '<span style="font-family:Oswald;font-size:1.2rem;color:#FFD600">'+fmtP(pr.p)+'</span>' +
+            '<button onclick="event.stopPropagation();cartAdd('+pr.id+')" style="width:32px;height:32px;background:#FFD600;color:#000;border:none;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background=\'#FFEB80\'" onmouseout="this.style.background=\'#FFD600\'">+</button>' +
+            '</div></div></div>';
+    }
+    grid.innerHTML = html;
+}
+
+function filterCat(cat, btn) {
+    var btns = document.querySelectorAll('.fbtn');
+    for (var i=0; i<btns.length; i++) { btns[i].classList.remove('on'); btns[i].style.color = '#888'; }
+    btn.classList.add('on');
+    btn.style.color = '';
+    renderShop(cat);
+}
+
+function buildMenu() {
+    var c = document.getElementById('menuContainer');
+    var cats = [{k:'sandwich',l:'🍔 Sandwiches'},{k:'side',l:'🍟 Accompagnements'},{k:'drink',l:'🥤 Boissons'}];
+    var html = '';
+    for (var ci=0; ci<cats.length; ci++) {
+        var items = P.filter(function(x){return x.c === cats[ci].k});
+        html += '<div style="margin-bottom:64px" class="reveal"><div style="display:flex;align-items:center;gap:16px;margin-bottom:28px">' +
+            '<h2 style="font-family:Oswald;font-size:1.6rem;text-transform:uppercase;white-space:nowrap">'+cats[ci].l+'</h2>' +
+            '<div style="flex:1;height:1px;background:#1c1c1c"></div></div>';
+        for (var i=0; i<items.length; i++) {
+            var pr = items[i];
+            html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid rgba(28,28,28,0.5);cursor:pointer;transition:padding 0.2s" onmouseover="this.style.paddingLeft=\'12px\'" onmouseout="this.style.paddingLeft=\'0\'" onclick="modalOpen('+pr.id+')">' +
+                '<div style="display:flex;align-items:center;gap:14px">' +
+                '<span style="width:8px;height:8px;background:rgba(255,214,0,0.3);display:block;transition:background 0.2s"></span>' +
+                '<div><div style="font-weight:600;font-size:0.85rem">'+pr.n+(pr.b ? ' <span style="color:#FFD600;font-size:0.65rem;font-family:Oswald;font-weight:700;margin-left:8px">'+pr.b+'</span>' : '')+'</div>' +
+                '<div style="color:#888;font-size:0.7rem;margin-top:2px">'+pr.d+'</div></div></div>' +
+                '<span style="font-family:Oswald;font-size:1.2rem;color:#FFD600;white-space:nowrap;margin-left:16px">'+fmtP(pr.p)+'</span></div>';
+        }
+        html += '</div>';
+    }
+    c.innerHTML = html;
+    setTimeout(doReveal, 100);
+}
+
+function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+function resaSubmit(e) {
+    e.preventDefault();
+    var ok = document.getElementById('resaOk');
+    ok.style.display = 'block';
+    e.target.reset();
+    setTimeout(function(){ ok.style.display = 'none'; }, 5000);
+}
+
+function updOpen() {
+    var h = new Date().getHours();
+    var open = h >= 11 || h < 1;
+    var dot = document.getElementById('openDot');
+    var txt = document.getElementById('openTxt');
+    if (dot && txt) {
+        if (open) {
+            dot.style.background = '#22c55e'; txt.textContent = 'Ouvert'; txt.style.color = '#4ade80';
+        } else {
+            dot.style.background = '#ef4444'; txt.textContent = 'Fermé — Ouvre à 11h'; txt.style.color = '#f87171';
+        }
+    }
+}
+
+function doReveal() {
+    var els = document.querySelectorAll('.reveal:not(.vis)');
+    for (var i=0; i<els.length; i++) {
+        (function(el){
+            var observer = new IntersectionObserver(function(entries){
+                if (entries[0].isIntersecting) { el.classList.add('vis'); observer.unobserve(el); }
+            }, {threshold: 0.1});
+            observer.observe(el);
+        })(els[i]);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    updHdr();
+    updOpen();
+    doReveal();
+    renderShop('all');
+    buildMenu();
+    setInterval(updOpen, 60000);
+});
+</script>
+
+</body>
+</html>
