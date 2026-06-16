@@ -1,0 +1,48 @@
+{
+  "categories": [
+    { "id": "pizzas", "label": "Pizzas", "icon": "🍕", "sortOrder": 0, "active": true },
+    { "id": "sandwichs", "label": "Sandwichs", "icon": "🥪", "sortOrder": 1, "active": true },
+    { "id": "accompagnements", "label": "Accompagnements", "icon": "🍟", "sortOrder": 2, "active": true },
+    { "id": "boissons", "label": "Boissons", "icon": "🥤", "sortOrder": 3, "active": true }
+  ],
+  "products": [
+    { "id": "pizza-margherita", "name": "Pizza Margherita", "description": "Tomate maison, mozzarella fondante, basilic frais.", "price": 10.5, "salePrice": null, "saleActive": false, "category": "pizzas", "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&h=600&fit=crop", "allergens": ["gluten", "lactose"], "badge": null, "featured": false, "active": true, "sortOrder": 0 },
+    { "id": "pizza-reine", "name": "Pizza Reine", "description": "Tomate, mozzarella, jambon, champignons frais.", "price": 12.5, "salePrice": null, "saleActive": false, "category": "pizzas", "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=600&fit=crop", "allergens": ["gluten", "lactose"], "badge": null, "featured": false, "active": true, "sortOrder": 1 },
+    { "id": "pizza-o77", "name": "Pizza O'77", "description": "La spéciale maison : viande hachée épicée, oignons rouges, sauce secrète O'77.", "price": 14.5, "salePrice": null, "saleActive": false, "category": "pizzas", "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop", "allergens": ["gluten", "lactose"], "badge": "🔥 Signature", "featured": true, "active": true, "sortOrder": 2 },
+    { "id": "naan-cheesy", "name": "Naan Cheesy O'77", "description": "Naan artisanal doré, cheddar fondu coulant, sauce secrète O'77, oignons croustillants.", "price": 12.9, "salePrice": null, "saleActive": false, "category": "sandwichs", "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=600&fit=crop&crop=center", "allergens": ["gluten", "lactose"], "badge": "🔥 Best", "featured": true, "active": true, "sortOrder": 3 },
+    { "id": "naan-poulet", "name": "Naan Poulet Croquant", "description": "Poulet pané maison croustillant, salade fraîche, tomates, sauce caésar.", "price": 11.9, "salePrice": null, "saleActive": false, "category": "sandwichs", "image": "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=600&fit=crop", "allergens": ["gluten", "lactose"], "badge": null, "featured": false, "active": true, "sortOrder": 4 },
+    { "id": "burger-o77", "name": "Burger O'77", "description": "Bœuf haché premium 150g, cheddar affiné, oignons caramélisés, sauce burger maison.", "price": 13.9, "salePrice": null, "saleActive": false, "category": "sandwichs", "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=600&fit=crop", "allergens": ["gluten", "lactose", "oeufs"], "badge": null, "featured": true, "active": true, "sortOrder": 5 },
+    { "id": "wrap-signature", "name": "Wrap Signature", "description": "Poulet rôti tendre, avocat frais, tomates confites, sauce yaourt-herbes.", "price": 10.9, "salePrice": null, "saleActive": false, "category": "sandwichs", "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=600&fit=crop", "allergens": ["gluten"], "badge": null, "featured": false, "active": true, "sortOrder": 6 },
+    { "id": "frites", "name": "Frites Maison", "description": "Pommes de terre fraîches, double cuisson, sel de Guérande.", "price": 4.5, "salePrice": null, "saleActive": false, "category": "accompagnements", "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=600&fit=crop", "allergens": [], "badge": null, "featured": false, "active": true, "sortOrder": 7 },
+    { "id": "potatoes", "name": "Potatoes Épicées", "description": "Pommes de terre grenaille rôties, épices maison, herbes fraîches.", "price": 5, "salePrice": null, "saleActive": false, "category": "accompagnements", "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=500&fit=crop", "allergens": [], "badge": null, "featured": false, "active": true, "sortOrder": 8 },
+    { "id": "nuggets", "name": "Nuggets Maison (x6)", "description": "Poulet fermier, panure croustillante aux herbes de Provence.", "price": 6.9, "salePrice": null, "saleActive": false, "category": "accompagnements", "image": "https://images.unsplash.com/photo-1562967914-608f82629710?w=600&h=600&fit=crop", "allergens": ["gluten"], "badge": null, "featured": false, "active": true, "sortOrder": 9 },
+    { "id": "limonade", "name": "Limonade Maison", "description": "Citron pressé du jour, menthe fraîche, eau gazeuse, touche de sucre de canne.", "price": 4, "salePrice": null, "saleActive": false, "category": "boissons", "image": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=600&h=600&fit=crop", "allergens": [], "badge": null, "featured": false, "active": true, "sortOrder": 10 },
+    { "id": "milkshake", "name": "Milkshake Vanille", "description": "Glace artisanale, lait entier, gousse de vanille de Madagascar.", "price": 5.5, "salePrice": null, "saleActive": false, "category": "boissons", "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&h=700&fit=crop", "allergens": ["lactose"], "badge": null, "featured": false, "active": true, "sortOrder": 11 },
+    { "id": "eau", "name": "Eau Minérale", "description": "Source naturelle pure. Plate ou gazeuse.", "price": 2.5, "salePrice": null, "saleActive": false, "category": "boissons", "image": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=600&h=600&fit=crop", "allergens": [], "badge": null, "featured": false, "active": true, "sortOrder": 12 }
+  ],
+  "config": {
+    "restaurantName": "O'77",
+    "slogan": "O'77 par nous, pour vous !",
+    "cuisine": "Fast-food & pizzeria",
+    "address": { "street": "146 Av. Charles Rouxel", "postalCode": "77340", "city": "Pontault-Combault", "country": "FR" },
+    "phone": "09 85 00 27 73",
+    "email": "o77pizzeria@gmail.com",
+    "hours": {
+      "monday": { "open": "11:00", "close": "01:00", "closed": false },
+      "tuesday": { "open": "11:00", "close": "01:00", "closed": false },
+      "wednesday": { "open": "11:00", "close": "01:00", "closed": false },
+      "thursday": { "open": "11:00", "close": "01:00", "closed": false },
+      "friday": { "open": "11:00", "close": "01:00", "closed": false },
+      "saturday": { "open": "11:00", "close": "01:00", "closed": false },
+      "sunday": { "open": "11:00", "close": "01:00", "closed": false }
+    },
+    "hero": { "badge": "Fast-food & Pizzeria — Pontault-Combault", "title": "LE GOÛT QUI DÉCHIRE", "subtitle": "Pizzas fait maison, sandwichs qui tuent, naans dorés. Ouvert 7j/7 jusqu'à 1h du mat'." },
+    "social": { "instagram": "", "tiktok": "", "snapchat": "" },
+    "delivery": {
+      "deliveroo": "https://deliveroo.fr/fr/menu/Paris/pontault-combault/o77-146-avenue-charles-rouxel/?day=today&geohash=u09ve1x2509h&time=ASAP&fulfillment_method=DELIVERY",
+      "ubereats": ""
+    },
+    "promoBanner": { "active": false, "text": "" },
+    "seo": { "googleRating": 5.0, "googleReviewCount": 21 }
+  }
+}

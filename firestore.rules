@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Lecture publique des données actives ; écriture réservée aux utilisateurs connectés.
+    // (Les écritures depuis le dashboard passent par l'Admin SDK via les routes API,
+    //  qui contourne ces règles — la sécurité vient donc de l'authentification du dashboard.)
+    match /products/{id} {
+      allow read: if resource.data.active == true;
+      allow write: if isSignedIn();
+    }
+    match /categories/{id} {
+      allow read: if resource.data.active == true;
+      allow write: if isSignedIn();
+    }
+    match /promos/{id} {
+      allow read: if resource.data.active == true;
+      allow write: if isSignedIn();
+    }
+
+    // Config du site : lecture publique, écriture admin.
+    match /site_config/{id} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // Pré-commandes Click & Collect : tout le monde peut créer, seul l'admin gère.
+    match /preorders/{id} {
+      allow create: if true;
+      allow read, update, delete: if isSignedIn();
+    }
+  }
+}
