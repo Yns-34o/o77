@@ -1,39 +1,80 @@
+import { useState } from 'react'
 import { fmtP, hasSale } from '@/lib/format'
 
-// Carte produit — clic => ouvre la modale détail.
-export default function ProductCard({ product, onOpen }) {
+// Emoji de repli par catégorie si l'image ne charge pas.
+const CAT_EMOJI = {
+  pizzas: '🍕',
+  sandwichs: '🥪',
+  accompagnements: '🍟',
+  boissons: '🥤',
+}
+
+// Carte produit premium — clic => ouvre la modale détail.
+// L'image est protégée par un repli élégant (onError) : en cas d'URL
+// indisponible, un pavé brandé (dégradé noir/jaune + emoji) s'affiche
+// à la place d'une icône d'image cassée.
+export default function ProductCard({ product, index = 0, onOpen }) {
+  const [imgError, setImgError] = useState(false)
   const sale = hasSale(product)
+  const emoji = CAT_EMOJI[product.category] || '🍽️'
+
   return (
-    <div className="product-card" style={{ background: '#111', border: '1px solid #1c1c1c', overflow: 'hidden' }} onClick={() => onOpen(product)}>
-      <div style={{ position: 'relative', overflow: 'hidden' }}>
-        <img
-          src={product.image}
-          alt={product.name}
-          loading="lazy"
-          style={{ width: '100%', height: 220, objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
-        />
-        {product.badge && (
-          <span style={{ position: 'absolute', top: 12, left: 12, background: '#FFD600', color: '#000', fontSize: 10, fontFamily: 'Oswald', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '4px 12px' }}>
-            {product.badge}
-          </span>
+    <article
+      className="product-card"
+      onClick={() => onOpen(product)}
+      style={{
+        animationDelay: `${Math.min(index, 8) * 0.06}s`,
+        background: '#0e0e0e',
+        border: '1px solid #1c1c1c',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <div className="product-card__media">
+        {!imgError ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="lazy"
+            onError={() => setImgError(true)}
+            className="product-card__img"
+          />
+        ) : (
+          <div className="product-card__fallback" aria-label={product.name}>
+            <span className="product-card__fallback-emoji">{emoji}</span>
+          </div>
         )}
+
+        <div className="product-card__sheen" />
+
+        {product.badge && (
+          <span className="product-card__badge">{product.badge}</span>
+        )}
+
+        {sale && <span className="product-card__deal">PROMO</span>}
+
+        <span className="product-card__view">Voir le plat →</span>
       </div>
-      <div style={{ padding: 20 }}>
-        <h3 style={{ fontFamily: 'Oswald', fontSize: '1.1rem', textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: 4 }}>{product.name}</h3>
-        <p style={{ color: '#888', fontSize: '0.75rem', marginBottom: 16, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-          {product.description}
-        </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {sale ? (
-            <>
-              <span style={{ color: '#555', textDecoration: 'line-through', fontSize: '0.9rem' }}>{fmtP(product.price)}</span>
-              <span style={{ fontFamily: 'Oswald', fontSize: '1.5rem', color: '#FFD600' }}>{fmtP(product.salePrice)}</span>
-            </>
-          ) : (
-            <span style={{ fontFamily: 'Oswald', fontSize: '1.5rem', color: '#FFD600' }}>{fmtP(product.price)}</span>
-          )}
+
+      <div className="product-card__body">
+        <h3 className="product-card__title">{product.name}</h3>
+        <p className="product-card__desc">{product.description}</p>
+
+        <div className="product-card__foot">
+          <div className="product-card__price">
+            {sale ? (
+              <>
+                <span className="product-card__price-old">{fmtP(product.price)}</span>
+                <span className="product-card__price-now">{fmtP(product.salePrice)}</span>
+              </>
+            ) : (
+              <span className="product-card__price-now">{fmtP(product.price)}</span>
+            )}
+          </div>
+          <span className="product-card__dot" />
         </div>
       </div>
-    </div>
+    </article>
   )
 }

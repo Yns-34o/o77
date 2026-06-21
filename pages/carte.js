@@ -3,9 +3,11 @@ import Seo from '@/components/Seo'
 import Reveal from '@/components/Reveal'
 import JsonLd from '@/components/JsonLd'
 import MenuList from '@/components/MenuList'
+import CategoryNav from '@/components/CategoryNav'
 import ProductModal from '@/components/ProductModal'
 import { getMenu } from '@/lib/site-data'
 import { hasSale } from '@/lib/format'
+import { DELIVEROO_URL } from '@/lib/constants'
 
 function buildMenuSchema(categories, products) {
   return {
@@ -37,6 +39,9 @@ export default function Carte({ categories, products }) {
   const [selected, setSelected] = useState(null)
   const menuSchema = buildMenuSchema(categories, products)
 
+  const featured = products.filter((p) => p.featured).slice(0, 3)
+  const minPrice = products.reduce((m, p) => Math.min(m, hasSale(p) ? p.salePrice : p.price), Infinity)
+
   return (
     <>
       <Seo
@@ -46,18 +51,81 @@ export default function Carte({ categories, products }) {
       />
       <JsonLd data={menuSchema} />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px 80px' }}>
-        <Reveal style={{ textAlign: 'center', marginBottom: 64 }}>
-          <span style={{ color: '#FFD600', fontSize: 11, fontFamily: 'Oswald', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>La Carte</span>
-          <h1 className="hero-big" style={{ fontFamily: 'Oswald', fontSize: '4rem', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>NOS SAVEURS</h1>
-        </Reveal>
+      {/* ===== Hero de la carte ===== */}
+      <header className="carte-hero">
+        <div className="carte-hero__bg" aria-hidden="true" />
+        <div className="carte-hero__glow" aria-hidden="true" />
+        <div className="carte-hero__inner">
+          <Reveal>
+            <span className="carte-hero__eyebrow">La Carte — Pontault-Combault</span>
+          </Reveal>
+          <Reveal>
+            <h1 className="carte-hero__title hero-big">
+              NOS <span className="carte-hero__title-accent">SAVEURS</span>
+            </h1>
+          </Reveal>
+          <Reveal>
+            <p className="carte-hero__sub">
+              Pizzas tournées main, naans dorés minute, accompagnements maison et boissons fraîches.
+              Tout est préparé sur place, à commander en livraison ou à emporter.
+            </p>
+          </Reveal>
+          <Reveal>
+            <div className="carte-hero__meta">
+              <span className="carte-hero__meta-item">
+                <strong>{products.length}</strong> plats
+              </span>
+              <span className="carte-hero__meta-sep" />
+              <span className="carte-hero__meta-item">
+                dès <strong>{Number(minPrice).toFixed(2).replace('.', ',')} €</strong>
+              </span>
+              <span className="carte-hero__meta-sep" />
+              <span className="carte-hero__meta-item">
+                <strong>7j/7</strong> · 11h–01h
+              </span>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="carte-hero__cta">
+              <a href={DELIVEROO_URL} target="_blank" rel="noopener noreferrer" className="btn-jaune">
+                Commander maintenant →
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </header>
 
-        <Reveal>
-          <MenuList categories={categories} products={products} onOpen={setSelected} />
-        </Reveal>
+      {/* ===== Signatures (mise en avant) ===== */}
+      {featured.length > 0 && (
+        <section className="carte-featured">
+          <Reveal>
+            <div className="carte-featured__label">
+              <span className="carte-featured__dot" /> Les signatures O'77
+            </div>
+          </Reveal>
+          <div className="carte-featured__row">
+            {featured.map((p, i) => (
+              <Reveal key={p.id} style={{ flex: '1 1 0', minWidth: 0 }}>
+                <button className="feat-chip" onClick={() => setSelected(p)} type="button">
+                  <span className="feat-chip__badge">{p.badge || '★'}</span>
+                  <span className="feat-chip__name">{p.name}</span>
+                </button>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
 
-        <p style={{ color: '#555', fontSize: '0.7rem', marginTop: 48, textAlign: 'center', lineHeight: 1.7 }}>
-          ⚠ La liste des allergènes est disponible sur demande auprès de notre personnel. Conformément au règlement (UE) n°1169/2011 (INCO), les informations obligatoires sont affichées sur place.
+      {/* ===== Navigation par catégorie (collante) ===== */}
+      <CategoryNav categories={categories} />
+
+      {/* ===== La carte ===== */}
+      <div className="carte-wrap">
+        <MenuList categories={categories} products={products} onOpen={setSelected} />
+
+        <p className="carte-allergens">
+          ⚠ La liste des allergènes est disponible sur demande auprès de notre personnel.
+          Conformément au règlement (UE) n°1169/2011 (INCO), les informations obligatoires sont affichées sur place.
         </p>
       </div>
 
