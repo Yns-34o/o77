@@ -159,7 +159,7 @@ function ProduitsTab({ data, reload }) {
             <Field label="Prix soldé (€) — laisser vide sinon"><input className="form-input" type="number" step="0.01" value={editing.salePrice} onChange={(e) => setEditing({ ...editing, salePrice: e.target.value })} /></Field>
             <Field label="Badge (ex: 🔥 Best)"><input className="form-input" value={editing.badge || ''} onChange={(e) => setEditing({ ...editing, badge: e.target.value })} /></Field>
           </div>
-          <Field label="Image (URL)"><input className="form-input" value={editing.image} onChange={(e) => setEditing({ ...editing, image: e.target.value })} style={inputStyle} /></Field>
+          <ImageField value={editing.image} onChange={(v) => setEditing({ ...editing, image: v })} />
           <Field label="Allergènes (séparés par des virgules)"><input className="form-input" value={editing.allergens} onChange={(e) => setEditing({ ...editing, allergens: e.target.value })} style={inputStyle} /></Field>
           <Field label="Ordre (tri)"><input className="form-input" type="number" value={editing.sortOrder} onChange={(e) => setEditing({ ...editing, sortOrder: e.target.value })} style={inputStyle} /></Field>
           <div style={{ display: 'flex', gap: 20, margin: '12px 0 20px' }}>
@@ -337,6 +337,28 @@ function SectionTitle({ title, action }) {
 }
 function Field({ label, children }) {
   return <div style={{ marginBottom: 12 }}><label style={lbl}>{label}</label>{children}</div>
+}
+// Champ image avec aperçu en direct : la preview se rafraîchit à chaque
+// modification de l'URL, et signale une image introuvable (onError).
+function ImageField({ value, onChange }) {
+  const [err, setErr] = useState(false)
+  useEffect(() => { setErr(false) }, [value])
+  const url = (value || '').trim()
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <label style={lbl}>Image (URL) — aperçu en direct</label>
+      <input className="form-input" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="https://…" style={inputStyle} />
+      <div style={{ marginTop: 8, height: 150, width: '100%', background: '#0a0a0a', border: '1px solid #1c1c1c', borderRadius: 4, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {url && !err ? (
+          <img src={url} alt="Aperçu" onError={() => setErr(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <span style={{ color: err ? '#f87171' : '#555', fontSize: '0.72rem', textAlign: 'center', padding: 12 }}>
+            {err ? "⚠ Image introuvable — vérifiez l'URL" : url ? 'Chargement…' : "L'aperçu apparaîtra ici"}
+          </span>
+        )}
+      </div>
+    </div>
+  )
 }
 function Check({ label, checked, onChange }) {
   return (

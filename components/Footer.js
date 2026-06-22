@@ -6,7 +6,6 @@ import { RESTAURANT } from '@/lib/constants'
 const NAV = [
   ['/', 'Accueil'],
   ['/carte', 'La Carte'],
-  ['/galerie', 'Galerie'],
   ['/histoire', 'Histoire'],
   ['/reserver', 'Réserver'],
   ['/commander', 'Commander'],

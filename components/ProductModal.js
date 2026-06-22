@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { fmtP, hasSale } from '@/lib/format'
-import { DELIVEROO_URL } from '@/lib/constants'
 
 const CAT_LABELS = {
   pizzas: 'Pizza',
@@ -46,7 +45,7 @@ export default function ProductModal({ product, onClose }) {
               </p>
             )}
 
-            <div style={{ fontFamily: 'Oswald', fontSize: '2.2rem', color: '#FFD600', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ fontFamily: 'Oswald', fontSize: '2.2rem', color: '#FFD600', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
               {sale ? (
                 <>
                   <span style={{ color: '#555', textDecoration: 'line-through', fontSize: '1.2rem' }}>{fmtP(product.price)}</span>
@@ -55,9 +54,9 @@ export default function ProductModal({ product, onClose }) {
               ) : fmtP(product.price)}
             </div>
 
-            <a href={DELIVEROO_URL} target="_blank" rel="noopener noreferrer" className="btn-jaune" style={{ width: '100%', textAlign: 'center', marginTop: 'auto' }}>
-              Commander sur Deliveroo →
-            </a>
+            <p style={{ marginTop: 'auto', color: '#666', fontSize: '0.72rem', lineHeight: 1.6, paddingTop: 16, borderTop: '1px solid #1c1c1c' }}>
+              Commande centralisée via le bouton <strong style={{ color: '#FFD600' }}>Commander</strong> en haut de page (livraison Deliveroo ou Click &amp; Collect).
+            </p>
           </div>
         </div>
       </div>
