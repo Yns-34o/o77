@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { parseCookies, verifySession, COOKIE_NAME } from '@/lib/auth-session'
+import { LEGAL_PAGE_META, LEGAL_PAGES, seedLegalPages } from '@/lib/legal-content'
 
 // Helper de fetch avec cookie de session.
 function adminFetch(path, body) {
@@ -274,7 +275,7 @@ function CategoriesTab({ data, reload }) {
 /* =================== INFOS & MENTIONS LÉGALES =================== */
 function InfosTab({ data, reload }) {
   const c = data.config || {}
-  const [cfg, setCfg] = useState(c)
+  const [cfg, setCfg] = useState(() => seedLegalPages(c))
   const [saved, setSaved] = useState(false)
   const set = (k, v) => setCfg({ ...cfg, [k]: v })
   const setDeep = (k1, k2, v) => setCfg({ ...cfg, [k1]: { ...cfg[k1], [k2]: v } })
@@ -319,7 +320,88 @@ function InfosTab({ data, reload }) {
         <Field label="Code APE/NAF"><input className="form-input" value={(cfg.legal && cfg.legal.ape) || ''} onChange={(e) => setLegal('ape', e.target.value)} /></Field>
       </div>
 
+      <SectionTitle title="Pages légales éditables" />
+      <p style={{ color: '#888', fontSize: '0.78rem', marginBottom: 16 }}>Modifiez le contenu des CGV, de la Politique de confidentialité et des Cookies. Les changements sont visibles publiquement dès le clic sur « Enregistrer les infos » ci-dessous.</p>
+      <LegalPagesEditor cfg={cfg} setCfg={setCfg} />
+
       <button onClick={save} className="btn-jaune" style={{ marginTop: 20 }}>{saved ? '✓ Enregistré' : 'Enregistrer les infos'}</button>
+    </div>
+  )
+}
+
+/* =================== ÉDITEUR PAGES LÉGALES (sections) =================== */
+function newSectionId(slug) {
+  return `${slug}-u${Math.random().toString(36).slice(2, 8)}`
+}
+
+function LegalPagesEditor({ cfg, setCfg }) {
+  const [open, setOpen] = useState(null) // slug de la page dépliée
+  const legalPages = cfg.legalPages || {}
+
+  function setSections(slug, sections) {
+    setCfg({ ...cfg, legalPages: { ...legalPages, [slug]: sections } })
+  }
+  function updateField(slug, idx, field, value) {
+    const arr = (legalPages[slug] || []).map((s) => ({ ...s }))
+    arr[idx] = { ...arr[idx], [field]: value }
+    setSections(slug, arr)
+  }
+  function addSection(slug) {
+    const arr = (legalPages[slug] || []).map((s) => ({ ...s }))
+    arr.push({ id: newSectionId(slug), title: '', body: '' })
+    setSections(slug, arr)
+  }
+  function removeSection(slug, idx) {
+    setSections(slug, (legalPages[slug] || []).filter((_, i) => i !== idx))
+  }
+  function resetPage(slug) {
+    if (!confirm('Réinitialiser cette page au texte par défaut ? Vos modifications seront perdues.')) return
+    setSections(slug, LEGAL_PAGES[slug].map((s) => ({ ...s })))
+  }
+  function moveSection(slug, idx, dir) {
+    const arr = (legalPages[slug] || []).map((s) => ({ ...s }))
+    const j = idx + dir
+    if (j < 0 || j >= arr.length) return
+    ;[arr[idx], arr[j]] = [arr[j], arr[idx]]
+    setSections(slug, arr)
+  }
+
+  return (
+    <div>
+      {LEGAL_PAGE_META.map(({ slug, label }) => {
+        const sections = legalPages[slug] || []
+        const isOpen = open === slug
+        return (
+          <div key={slug} style={{ background: '#111', border: '1px solid #1c1c1c', marginBottom: 10 }}>
+            <button onClick={() => setOpen(isOpen ? null : slug)} style={{ width: '100%', textAlign: 'left', padding: '14px 16px', background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'Oswald', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '0.8rem' }}>
+              <span>{label} <span style={{ color: '#555', fontSize: '0.7rem', textTransform: 'none' }}>({sections.length} sections)</span></span>
+              <span style={{ color: '#FFD600', fontSize: '1.1rem' }}>{isOpen ? '−' : '+'}</span>
+            </button>
+            {isOpen && (
+              <div style={{ padding: '4px 16px 20px' }}>
+                <p style={{ color: '#888', fontSize: '0.7rem', marginBottom: 14, lineHeight: 1.6 }}>
+                  ⚠ Contenu juridique — modifiez avec précaution. Mise en forme&nbsp;: ligne débutant par <code>- </code> = puce&nbsp;; <code>**gras**</code>, <code>*italique*</code>&nbsp;; <code>### titre</code> = sous-titre&nbsp;; <code>[texte](url)</code> = lien. Les champs <code>{`{{email}}`}</code>, <code>{`{{address}}`}</code>… sont remplis automatiquement.
+                </p>
+                {sections.map((s, idx) => (
+                  <div key={s.id || idx} style={{ borderTop: idx ? '1px solid #1c1c1c' : 'none', paddingTop: idx ? 14 : 0, marginTop: idx ? 14 : 0 }}>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+                      <input className="form-input" value={s.title || ''} onChange={(e) => updateField(slug, idx, 'title', e.target.value)} placeholder="Titre de la section (ex : Article 1 — Objet). Laisser vide pour un bloc d'intro." style={{ flex: 1 }} />
+                      <button onClick={() => moveSection(slug, idx, -1)} title="Monter" style={{ ...miniBtn, flexShrink: 0 }}>↑</button>
+                      <button onClick={() => moveSection(slug, idx, 1)} title="Descendre" style={{ ...miniBtn, flexShrink: 0 }}>↓</button>
+                      <button onClick={() => removeSection(slug, idx)} title="Supprimer la section" style={{ ...miniBtn, color: '#f87171', flexShrink: 0 }}>Suppr.</button>
+                    </div>
+                    <textarea className="form-input" rows={4} value={s.body || ''} onChange={(e) => updateField(slug, idx, 'body', e.target.value)} placeholder="Texte de la section…" style={{ width: '100%' }} />
+                  </div>
+                ))}
+                <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+                  <button onClick={() => addSection(slug)} className="btn-outline" style={{ fontSize: '0.7rem', padding: '8px 16px' }}>+ Ajouter une section</button>
+                  <button onClick={() => resetPage(slug)} style={{ ...miniBtn }}>Réinitialiser au défaut</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
