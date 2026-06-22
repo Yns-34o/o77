@@ -1,3 +1,4 @@
+import { AlertTriangle } from 'lucide-react'
 import LegalLayout from '@/components/LegalLayout'
 import { getSiteConfig } from '@/lib/site-data'
 import { resolveLegal } from '@/lib/legal-info'
@@ -56,8 +57,9 @@ export default function MentionsLegales({ legal }) {
         Les présentes mentions légales sont régies par le droit français. En cas de litige, une solution amiable sera recherchée prioritairement. À défaut, les tribunaux français seront seuls compétents. Conformément à l'article L.612-1 du Code de la consommation, le consommateur peut recourir gratuitement à un médiateur de la consommation.
       </p>
 
-      <p style={{ marginTop: 40, color: '#555', fontSize: '0.75rem' }}>
-        ⚠ Certaines informations (forme juridique, SIRET, RCS, TVA, capital, gérant) sont à compléter par le restaurateur depuis le tableau de bord. Elles seront affichées automatiquement dès leur saisie.
+      <p style={{ marginTop: 40, color: '#555', fontSize: '0.75rem', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+        <AlertTriangle size={14} style={{ color: '#FFD600', flexShrink: 0, marginTop: 2 }} />
+        <span>Certaines informations (forme juridique, SIRET, RCS, TVA, capital, gérant) sont à compléter par le restaurateur depuis le tableau de bord. Elles seront affichées automatiquement dès leur saisie.</span>
       </p>
     </LegalLayout>
   )

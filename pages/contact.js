@@ -1,3 +1,4 @@
+import { Phone } from 'lucide-react'
 import Seo from '@/components/Seo'
 import Reveal from '@/components/Reveal'
 import OpenStatus from '@/components/OpenStatus'
@@ -53,8 +54,8 @@ export default function Contact() {
 
             <div style={{ marginBottom: 32 }}>
               <h3 style={{ fontFamily: 'Oswald', fontSize: '1.2rem', color: '#FFD600', textTransform: 'uppercase', marginBottom: 16 }}>Téléphone</h3>
-              <a href={RESTAURANT.phoneHref} style={{ display: 'inline-flex', alignItems: 'center', gap: 12, background: '#111', border: '1px solid #1c1c1c', padding: '14px 20px', textDecoration: 'none', color: '#fff', fontFamily: 'Oswald', fontSize: '1.1rem' }}>
-                📞 09 85 00 27 73
+              <a href={RESTAURANT.phoneHref} style={{ display: 'inline-flex', alignItems: 'center', gap: 12, background: '#111', border: '1px solid #1c1c1c', padding: '14px 20px', textDecoration: 'none', color: '#fff', fontFamily: 'Oswald', fontSize: '1.1rem', borderRadius: 12 }}>
+                <Phone size={18} /> 09 85 00 27 73
               </a>
             </div>
 

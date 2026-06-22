@@ -1,7 +1,11 @@
 import Link from 'next/link'
+import { MapPin, Phone, Mail } from 'lucide-react'
 import OpenStatus from './OpenStatus'
 import { useConfig } from '@/context/ConfigContext'
 import { RESTAURANT } from '@/lib/constants'
+
+// Icône inline alignée avec le texte (utilisé dans les coordonnées).
+const inlineIcon = { display: 'inline-block', verticalAlign: '-3px', marginRight: 8, flexShrink: 0 }
 
 const NAV = [
   ['/', 'Accueil'],
@@ -51,7 +55,7 @@ export default function Footer() {
             {socials.length > 0 && (
               <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
                 {socials.map(([k, url]) => (
-                  <a key={k} href={url} target="_blank" rel="noopener noreferrer" style={{ width: 36, height: 36, border: '1px solid #1c1c1c', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', textDecoration: 'none' }}>
+                  <a key={k} href={url} target="_blank" rel="noopener noreferrer" style={{ width: 36, height: 36, border: '1px solid #1c1c1c', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', textDecoration: 'none', borderRadius: 9 }}>
                     <iconify-icon icon={SOCIAL_ICONS[k] || 'simple-icons:linktree'} width="14" />
                   </a>
                 ))}
@@ -61,11 +65,11 @@ export default function Footer() {
 
           <div>
             <h4 style={{ color: '#FFD600', fontSize: 10, fontFamily: 'Oswald', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20 }}>Contact</h4>
-            <a href={`https://maps.google.com/?q=${encodeURIComponent(addr.street + ' ' + addr.postalCode)}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block', color: '#888', fontSize: '0.8rem', textDecoration: 'none', marginBottom: 12 }}>
-              📍 {addr.street}<br />{addr.postalCode} {addr.city}
+            <a href={`https://maps.google.com/?q=${encodeURIComponent(addr.street + ' ' + addr.postalCode)}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'flex-start', color: '#888', fontSize: '0.8rem', textDecoration: 'none', marginBottom: 12, lineHeight: 1.6 }}>
+              <MapPin size={13} style={inlineIcon} /> <span>{addr.street}<br />{addr.postalCode} {addr.city}</span>
             </a>
-            <a href={`tel:${phone.replace(/\s/g, '')}`} style={{ display: 'block', color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}>📞 {phone}</a>
-            <a href={`mailto:${email}`} style={{ display: 'block', color: '#888', fontSize: '0.8rem', textDecoration: 'none', marginTop: 12 }}>✉️ {email}</a>
+            <a href={`tel:${phone.replace(/\s/g, '')}`} style={{ display: 'flex', alignItems: 'center', color: '#888', fontSize: '0.8rem', textDecoration: 'none' }}><Phone size={13} style={inlineIcon} /> {phone}</a>
+            <a href={`mailto:${email}`} style={{ display: 'flex', alignItems: 'center', color: '#888', fontSize: '0.8rem', textDecoration: 'none', marginTop: 12 }}><Mail size={13} style={inlineIcon} /> {email}</a>
           </div>
 
           <div>

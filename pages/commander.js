@@ -3,6 +3,7 @@ import Seo from '@/components/Seo'
 import Reveal from '@/components/Reveal'
 import ProductCard from '@/components/ProductCard'
 import ProductModal from '@/components/ProductModal'
+import CategoryIcon from '@/components/CategoryIcon'
 import { getMenu } from '@/lib/site-data'
 import { DELIVEROO_URL } from '@/lib/constants'
 
@@ -10,7 +11,7 @@ export default function Commander({ categories, products }) {
   const [cat, setCat] = useState('all')
   const [selected, setSelected] = useState(null)
   const list = cat === 'all' ? products : products.filter((p) => p.category === cat)
-  const cats = [{ id: 'all', label: 'Tout', icon: '🍽️' }, ...categories]
+  const cats = [{ id: 'all', label: 'Tout' }, ...categories]
 
   return (
     <>
@@ -36,8 +37,8 @@ export default function Commander({ categories, products }) {
 
         <Reveal style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 40 }}>
           {cats.map((c) => (
-            <button key={c.id} className={`fbtn ${cat === c.id ? 'on' : ''}`} onClick={() => setCat(c.id)} style={{ padding: '10px 24px', fontSize: '0.8rem', fontWeight: 700, border: '1px solid #1c1c1c', background: 'none', color: '#888' }}>
-              {c.icon} {c.label}
+            <button key={c.id} className={`fbtn ${cat === c.id ? 'on' : ''}`} onClick={() => setCat(c.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 24px', fontSize: '0.8rem', fontWeight: 700, border: '1px solid #1c1c1c', background: 'none', color: '#888' }}>
+              <CategoryIcon category={c.id} size={15} /> {c.label}
             </button>
           ))}
         </Reveal>

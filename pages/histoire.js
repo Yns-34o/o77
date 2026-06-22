@@ -1,10 +1,11 @@
+import { Flame, Leaf, Moon } from 'lucide-react'
 import Seo from '@/components/Seo'
 import Reveal from '@/components/Reveal'
 
 const VALUES = [
-  { icon: '🔥', title: 'Fait Maison', text: "Pizzas et naans pétris à la commande, sauces 100% créa, panures maison. Zéro industriel." },
-  { icon: '🥬', title: 'Frais Toujours', text: 'Produits livrés chaque matin, rien de congelé. La qualité, c’est non-négociable.' },
-  { icon: '🌙', title: 'Night Food', text: "Ouvert jusqu'à 1h du mat'. Parce que la faim, elle a pas d'heure." },
+  { Icon: Flame, title: 'Fait Maison', text: "Pizzas et naans pétris à la commande, sauces 100% créa, panures maison. Zéro industriel." },
+  { Icon: Leaf, title: 'Frais Toujours', text: 'Produits livrés chaque matin, rien de congelé. La qualité, c’est non-négociable.' },
+  { Icon: Moon, title: 'Night Food', text: "Ouvert jusqu'à 1h du mat'. Parce que la faim, elle a pas d'heure." },
 ]
 
 export default function Histoire() {
@@ -37,7 +38,9 @@ export default function Histoire() {
         <Reveal className="val-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
           {VALUES.map((v) => (
             <div key={v.title} style={{ background: '#111', border: '1px solid #1c1c1c', padding: '40px 28px', textAlign: 'center' }}>
-              <span style={{ fontSize: 28, display: 'block', marginBottom: 16 }}>{v.icon}</span>
+              <span style={{ color: '#FFD600', display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                <v.Icon size={30} strokeWidth={1.75} />
+              </span>
               <h3 style={{ fontFamily: 'Oswald', fontSize: '1.2rem', textTransform: 'uppercase', marginBottom: 12 }}>{v.title}</h3>
               <p style={{ color: '#888', fontSize: '0.75rem', lineHeight: 1.8 }}>{v.text}</p>
             </div>

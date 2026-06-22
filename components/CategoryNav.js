@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import CategoryIcon from './CategoryIcon'
 
 // Barre de navigation par catégorie, collante sous le header.
 // - Clic : défilement doux vers la section (avec décalage pour header + barre).
@@ -56,7 +57,7 @@ export default function CategoryNav({ categories }) {
               onClick={() => goTo(c.id)}
               className={`catnav__btn ${active === c.id ? 'is-active' : ''}`}
             >
-              <span className="catnav__icon" aria-hidden="true">{c.icon}</span>
+              <CategoryIcon category={c.id} size={15} className="catnav__icon" />
               {c.label}
               <span className="catnav__underline" />
             </button>

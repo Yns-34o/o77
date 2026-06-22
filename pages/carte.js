@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { AlertTriangle } from 'lucide-react'
 import Seo from '@/components/Seo'
 import Reveal from '@/components/Reveal'
 import JsonLd from '@/components/JsonLd'
 import MenuList from '@/components/MenuList'
 import CategoryNav from '@/components/CategoryNav'
+import SignatureCard from '@/components/SignatureCard'
 import ProductModal from '@/components/ProductModal'
 import { getMenu } from '@/lib/site-data'
 import { hasSale } from '@/lib/format'
@@ -99,17 +101,17 @@ export default function Carte({ categories, products }) {
       {featured.length > 0 && (
         <section className="carte-featured">
           <Reveal>
-            <div className="carte-featured__label">
-              <span className="carte-featured__dot" /> Les signatures O'77
+            <div className="carte-featured__head">
+              <span className="carte-featured__label">
+                <span className="carte-featured__dot" /> Les signatures O'77
+              </span>
+              <span className="carte-featured__sub">Nos incontournables — préparés minute, à tomber.</span>
             </div>
           </Reveal>
           <div className="carte-featured__row">
             {featured.map((p, i) => (
-              <Reveal key={p.id} style={{ flex: '1 1 0', minWidth: 0 }}>
-                <button className="feat-chip" onClick={() => setSelected(p)} type="button">
-                  <span className="feat-chip__badge">{p.badge || '★'}</span>
-                  <span className="feat-chip__name">{p.name}</span>
-                </button>
+              <Reveal key={p.id}>
+                <SignatureCard product={p} index={i} onOpen={setSelected} />
               </Reveal>
             ))}
           </div>
@@ -124,7 +126,8 @@ export default function Carte({ categories, products }) {
         <MenuList categories={categories} products={products} onOpen={setSelected} />
 
         <p className="carte-allergens">
-          ⚠ La liste des allergènes est disponible sur demande auprès de notre personnel.
+          <AlertTriangle size={13} style={{ display: 'inline-block', verticalAlign: '-2px', marginRight: 8, color: '#FFD600' }} />
+          La liste des allergènes est disponible sur demande auprès de notre personnel.
           Conformément au règlement (UE) n°1169/2011 (INCO), les informations obligatoires sont affichées sur place.
         </p>
       </div>

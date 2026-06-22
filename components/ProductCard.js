@@ -1,22 +1,15 @@
 import { useState } from 'react'
+import { Flame } from 'lucide-react'
 import { fmtP, hasSale } from '@/lib/format'
-
-// Emoji de repli par catégorie si l'image ne charge pas.
-const CAT_EMOJI = {
-  pizzas: '🍕',
-  sandwichs: '🥪',
-  accompagnements: '🍟',
-  boissons: '🥤',
-}
+import CategoryIcon from './CategoryIcon'
 
 // Carte produit premium — clic => ouvre la modale détail.
 // L'image est protégée par un repli élégant (onError) : en cas d'URL
-// indisponible, un pavé brandé (dégradé noir/jaune + emoji) s'affiche
+// indisponible, un pavé brandé (dégradé noir/jaune + icône Lucide) s'affiche
 // à la place d'une icône d'image cassée.
 export default function ProductCard({ product, index = 0, onOpen }) {
   const [imgError, setImgError] = useState(false)
   const sale = hasSale(product)
-  const emoji = CAT_EMOJI[product.category] || '🍽️'
 
   return (
     <article
@@ -42,14 +35,17 @@ export default function ProductCard({ product, index = 0, onOpen }) {
           />
         ) : (
           <div className="product-card__fallback" aria-label={product.name}>
-            <span className="product-card__fallback-emoji">{emoji}</span>
+            <CategoryIcon category={product.category} size={64} strokeWidth={1.5} className="product-card__fallback-icon" />
           </div>
         )}
 
         <div className="product-card__sheen" />
 
         {product.badge && (
-          <span className="product-card__badge">{product.badge}</span>
+          <span className="product-card__badge">
+            <Flame size={11} style={{ display: 'inline-block', verticalAlign: '-1px', marginRight: 5 }} />
+            {product.badge}
+          </span>
         )}
 
         {sale && <span className="product-card__deal">PROMO</span>}
