@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { DELIVEROO_URL } from '@/lib/constants'
 
 // Hero de la page d'accueil — texte piloté par la config (dashboard > Infos).
 export default function Hero({ config }) {
@@ -34,8 +35,8 @@ export default function Hero({ config }) {
             « {slogan} »
           </p>
           <div className="anim-up anim-d3" style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-            <Link href="/carte" className="btn-jaune">Voir la carte</Link>
-            <Link href="/commander" className="btn-outline">Commander</Link>
+            <Link href="/commander" className="btn-jaune">Commander</Link>
+            <a href={DELIVEROO_URL} target="_blank" rel="noopener noreferrer" className="btn-outline">Sur Deliveroo ↗</a>
           </div>
         </div>
       </div>

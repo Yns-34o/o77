@@ -4,17 +4,19 @@ import { fmtP, hasSale } from '@/lib/format'
 import CategoryIcon from './CategoryIcon'
 
 // Carte produit premium — clic => ouvre la modale détail.
+// displayOnly=true => carte « vitrine » (non interactive) : pas de clic, pas
+// d'overlay « Voir le plat ». Utilisé sur la page Commander.
 // L'image est protégée par un repli élégant (onError) : en cas d'URL
 // indisponible, un pavé brandé (dégradé noir/jaune + icône Lucide) s'affiche
 // à la place d'une icône d'image cassée.
-export default function ProductCard({ product, index = 0, onOpen }) {
+export default function ProductCard({ product, index = 0, onOpen, displayOnly = false }) {
   const [imgError, setImgError] = useState(false)
   const sale = hasSale(product)
 
   return (
     <article
-      className="product-card"
-      onClick={() => onOpen(product)}
+      className={`product-card${displayOnly ? ' product-card--static' : ''}`}
+      onClick={displayOnly ? undefined : () => onOpen(product)}
       style={{
         animationDelay: `${Math.min(index, 8) * 0.06}s`,
         background: '#0e0e0e',
@@ -50,7 +52,7 @@ export default function ProductCard({ product, index = 0, onOpen }) {
 
         {sale && <span className="product-card__deal">PROMO</span>}
 
-        <span className="product-card__view">Voir le plat →</span>
+        {!displayOnly && <span className="product-card__view">Voir le plat →</span>}
       </div>
 
       <div className="product-card__body">

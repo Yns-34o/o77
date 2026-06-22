@@ -16,7 +16,7 @@ const restaurantSchema = {
   servesCuisine: ['Fast food', 'Pizza', 'Sandwich', 'Street food', 'Tacos'],
   priceRange: '€€',
   acceptsReservations: 'True',
-  hasMenu: `${SITE_URL}/carte`,
+  hasMenu: `${SITE_URL}/commander`,
   address: {
     '@type': 'PostalAddress',
     streetAddress: '146 Av. Charles Rouxel',

@@ -9,9 +9,7 @@ const inlineIcon = { display: 'inline-block', verticalAlign: '-3px', marginRight
 
 const NAV = [
   ['/', 'Accueil'],
-  ['/carte', 'La Carte'],
   ['/histoire', 'Histoire'],
-  ['/reserver', 'Réserver'],
   ['/commander', 'Commander'],
   ['/contact', 'Contact'],
 ]

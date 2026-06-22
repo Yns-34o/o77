@@ -1,9 +1,9 @@
 import { AlertTriangle } from 'lucide-react'
 import LegalLayout from '@/components/LegalLayout'
 import { getSiteConfig } from '@/lib/site-data'
-import { resolveLegal } from '@/lib/legal-info'
+import { resolveLegal, missingLegalFields } from '@/lib/legal-info'
 
-export default function MentionsLegales({ legal }) {
+export default function MentionsLegales({ legal, missing }) {
   return (
     <LegalLayout
       title="Mentions légales"
@@ -18,6 +18,7 @@ export default function MentionsLegales({ legal }) {
         <p><strong>RCS :</strong> <span className="ph">{legal.rcs}</span></p>
         <p><strong>TVA intracommunautaire :</strong> <span className="ph">{legal.tva}</span></p>
         <p><strong>Capital social :</strong> <span className="ph">{legal.capital}</span></p>
+        <p><strong>Code APE / NAF :</strong> <span className="ph">{legal.ape}</span></p>
         <p><strong>Siège :</strong> {legal.address}</p>
         <p><strong>Téléphone :</strong> {legal.phone}</p>
         <p><strong>Email :</strong> <a href={`mailto:${legal.email}`}>{legal.email}</a></p>
@@ -57,15 +58,18 @@ export default function MentionsLegales({ legal }) {
         Les présentes mentions légales sont régies par le droit français. En cas de litige, une solution amiable sera recherchée prioritairement. À défaut, les tribunaux français seront seuls compétents. Conformément à l'article L.612-1 du Code de la consommation, le consommateur peut recourir gratuitement à un médiateur de la consommation.
       </p>
 
-      <p style={{ marginTop: 40, color: '#555', fontSize: '0.75rem', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-        <AlertTriangle size={14} style={{ color: '#FFD600', flexShrink: 0, marginTop: 2 }} />
-        <span>Certaines informations (forme juridique, SIRET, RCS, TVA, capital, gérant) sont à compléter par le restaurateur depuis le tableau de bord. Elles seront affichées automatiquement dès leur saisie.</span>
-      </p>
+      {missing && missing.length > 0 && (
+        <p style={{ marginTop: 40, color: '#555', fontSize: '0.75rem', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+          <AlertTriangle size={14} style={{ color: '#FFD600', flexShrink: 0, marginTop: 2 }} />
+          <span>Informations encore à compléter depuis le tableau de bord (onglet <em>Infos &amp; Légal</em>) : {missing.join(', ')}. Elles s'afficheront automatiquement dès leur saisie.</span>
+        </p>
+      )}
     </LegalLayout>
   )
 }
 
 export async function getServerSideProps() {
   const config = await getSiteConfig()
-  return { props: { legal: resolveLegal(config) } }
+  const legal = resolveLegal(config)
+  return { props: { legal, missing: missingLegalFields(legal) } }
 }

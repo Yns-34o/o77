@@ -23,7 +23,7 @@ export default function Histoire() {
         </Reveal>
 
         <Reveal className="hist-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, marginBottom: 80, alignItems: 'center' }}>
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&h=900&fit=crop" alt="En cuisine chez O'77" loading="lazy" style={{ width: '100%', height: 450, objectFit: 'cover', display: 'block' }} />
+          <img src="/histoire-fastfood.webp" alt="O'77 — street food de renom à Pontault-Combault" loading="lazy" style={{ width: '100%', height: 480, objectFit: 'cover', display: 'block', borderRadius: 16, border: '1px solid #1c1c1c' }} />
           <div>
             <h2 style={{ fontFamily: 'Oswald', fontSize: '1.6rem', color: '#FFD600', textTransform: 'uppercase', marginBottom: 20 }}>Le début</h2>
             <p style={{ color: '#888', fontSize: '0.85rem', lineHeight: 2, marginBottom: 16 }}>
@@ -35,14 +35,14 @@ export default function Histoire() {
           </div>
         </Reveal>
 
-        <Reveal className="val-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+        <Reveal className="val-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
           {VALUES.map((v) => (
-            <div key={v.title} style={{ background: '#111', border: '1px solid #1c1c1c', padding: '40px 28px', textAlign: 'center' }}>
-              <span style={{ color: '#FFD600', display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-                <v.Icon size={30} strokeWidth={1.75} />
+            <div key={v.title} className="val-card">
+              <span className="val-card__icon">
+                <v.Icon size={28} strokeWidth={1.75} />
               </span>
-              <h3 style={{ fontFamily: 'Oswald', fontSize: '1.2rem', textTransform: 'uppercase', marginBottom: 12 }}>{v.title}</h3>
-              <p style={{ color: '#888', fontSize: '0.75rem', lineHeight: 1.8 }}>{v.text}</p>
+              <h3 className="val-card__title">{v.title}</h3>
+              <p className="val-card__text">{v.text}</p>
             </div>
           ))}
         </Reveal>

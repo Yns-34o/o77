@@ -129,6 +129,10 @@ body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow
 .product-card__price-old { font-size: 0.8rem; color: #555; text-decoration: line-through; }
 .product-card__dot { width: 7px; height: 7px; background: var(--jaune); opacity: 0.4; }
 
+/* Variante « vitrine » (page Commander) : carte non interactive */
+.product-card--static { cursor: default; }
+.product-card--static:hover { transform: none; border-color: var(--noir-border) !important; box-shadow: none; }
+
 /* ===== Hero de la carte ===== */
 .carte-hero { position: relative; padding: 8px 20px 70px; overflow: hidden; text-align: center; }
 .carte-hero__bg {
@@ -322,6 +326,53 @@ body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow
   .foot-grid { grid-template-columns: 1fr !important; }
   .modal-grid { grid-template-columns: 1fr !important; }
   .modal-img { height: 220px !important; }
+}
+
+/* ===== Cartes caractéristiques (page Histoire) ===== */
+.val-card {
+  position: relative;
+  background: linear-gradient(180deg, #141414 0%, #0c0c0c 100%);
+  border: 1px solid var(--noir-border);
+  padding: 52px 30px 42px;
+  text-align: center;
+  overflow: hidden;
+  border-radius: 16px;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.val-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--jaune), transparent);
+  opacity: 0.45;
+  transition: opacity 0.4s ease;
+}
+.val-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255,214,0,0.4);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 30px rgba(255,214,0,0.08);
+}
+.val-card:hover::before { opacity: 1; }
+.val-card__icon {
+  width: 68px; height: 68px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255,214,0,0.3);
+  background: radial-gradient(circle, rgba(255,214,0,0.14), transparent 70%);
+  color: var(--jaune);
+  margin-bottom: 24px;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.val-card:hover .val-card__icon {
+  border-color: var(--jaune);
+  box-shadow: 0 0 28px rgba(255,214,0,0.25);
+}
+.val-card__title {
+  font-family: 'Oswald', sans-serif; font-size: 1.2rem;
+  text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 14px;
+}
+.val-card__text { color: var(--gris); font-size: 0.8rem; line-height: 1.85; }
+@media (max-width: 640px) {
+  .val-card { padding: 40px 22px 34px; }
 }
 
 /* ===== Pages légales ===== */
