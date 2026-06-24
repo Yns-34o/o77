@@ -303,6 +303,7 @@ function InfosTab({ data, reload }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <Field label="Lien Deliveroo"><input className="form-input" value={(cfg.delivery && cfg.delivery.deliveroo) || ''} onChange={(e) => setDeep('delivery', 'deliveroo', e.target.value)} /></Field>
         <Field label="Lien Uber Eats (si dispo)"><input className="form-input" value={(cfg.delivery && cfg.delivery.ubereats) || ''} onChange={(e) => setDeep('delivery', 'ubereats', e.target.value)} /></Field>
+        <Field label="Lien Just Eat (si dispo)"><input className="form-input" value={(cfg.delivery && cfg.delivery.justeat) || ''} onChange={(e) => setDeep('delivery', 'justeat', e.target.value)} /></Field>
         <Field label="Instagram (URL)"><input className="form-input" value={(cfg.social && cfg.social.instagram) || ''} onChange={(e) => setDeep('social', 'instagram', e.target.value)} /></Field>
         <Field label="TikTok (URL)"><input className="form-input" value={(cfg.social && cfg.social.tiktok) || ''} onChange={(e) => setDeep('social', 'tiktok', e.target.value)} /></Field>
       </div>

@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NAV_LINKS } from '@/lib/constants'
+import OrderButton from './OrderButton'
+import { useConfig } from '@/context/ConfigContext'
 
 export default function Header() {
   const router = useRouter()
+  const config = useConfig()
   const isHome = router.pathname === '/'
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -46,9 +49,13 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
-            <Link href="/commander" className="btn-jaune" style={{ fontSize: '0.75rem', padding: '10px 24px' }}>
-              Commander
-            </Link>
+            {!config ? (
+              <Link href="/commander" className="btn-jaune" style={{ fontSize: '0.75rem', padding: '10px 24px' }}>
+                Commander
+              </Link>
+            ) : (
+              <OrderButton delivery={config.delivery} className="btn-jaune" label="Commander" style={{ fontSize: '0.75rem', padding: '10px 24px' }} />
+            )}
           </nav>
 
           <button className="mob-btn" onClick={() => setMenuOpen(true)} aria-label="Ouvrir le menu" style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 24 }}>

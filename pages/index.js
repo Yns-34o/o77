@@ -10,7 +10,7 @@ import DeliveryBadges from '@/components/DeliveryBadges'
 import ProductModal from '@/components/ProductModal'
 import { getMenu, getActiveBanner } from '@/lib/site-data'
 
-export default function Home({ products, banner }) {
+export default function Home({ products, banner, config }) {
   const [selected, setSelected] = useState(null)
 
   return (
@@ -21,7 +21,7 @@ export default function Home({ products, banner }) {
         path="/"
       />
 
-      <Hero />
+      <Hero config={config} />
       {banner && <PromoBanner text={banner.text} />}
       <Marquee />
 
@@ -50,7 +50,7 @@ export default function Home({ products, banner }) {
 }
 
 export async function getServerSideProps() {
-  const { products } = await getMenu()
+  const { products, config } = await getMenu()
   const banner = await getActiveBanner()
-  return { props: { products, banner } }
+  return { props: { products, banner, config } }
 }

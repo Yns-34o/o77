@@ -1,9 +1,14 @@
 import { useEffect } from 'react'
-import { fmtP, hasSale } from '@/lib/format'
+import { priceDisplay, priceSale } from '@/lib/format'
+import CategoryIcon from './CategoryIcon'
 
 const CAT_LABELS = {
   pizzas: 'Pizza',
+  burgers: 'Burger',
   sandwichs: 'Sandwich',
+  tacos: 'Tacos',
+  'tex-max': 'Tex-Max',
+  paninis: 'Panini',
   accompagnements: 'Accompagnement',
   boissons: 'Boisson',
 }
@@ -22,14 +27,18 @@ export default function ProductModal({ product, onClose }) {
   }, [product, onClose])
 
   if (!product) return null
-  const sale = hasSale(product)
+  const sale = priceSale(product) // {old,now} si promo, sinon null
 
   return (
     <div className="modal-bg open" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
       <div className="modal-box">
         <div className="modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-          <div style={{ position: 'relative', overflow: 'hidden', background: '#111' }}>
-            <img src={product.image} alt={product.name} className="modal-img" style={{ width: '100%', height: 300, objectFit: 'cover' }} />
+          <div style={{ position: 'relative', overflow: 'hidden', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {product.image ? (
+              <img src={product.image} alt={product.name} className="modal-img" style={{ width: '100%', height: 300, objectFit: 'cover' }} />
+            ) : (
+              <CategoryIcon category={product.category} size={92} strokeWidth={1.25} style={{ color: '#2a2a2a' }} />
+            )}
           </div>
           <div style={{ padding: 32, display: 'flex', flexDirection: 'column' }}>
             <button onClick={onClose} aria-label="Fermer" style={{ alignSelf: 'flex-end', background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: 20, marginBottom: 16 }}>✕</button>
@@ -45,13 +54,13 @@ export default function ProductModal({ product, onClose }) {
               </p>
             )}
 
-            <div style={{ fontFamily: 'Oswald', fontSize: '2.2rem', color: '#FFD600', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ fontFamily: 'Oswald', fontSize: product.priceLabel ? '1.3rem' : '2.2rem', color: '#FFD600', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', lineHeight: 1.15 }}>
               {sale ? (
                 <>
-                  <span style={{ color: '#555', textDecoration: 'line-through', fontSize: '1.2rem' }}>{fmtP(product.price)}</span>
-                  {fmtP(product.salePrice)}
+                  <span style={{ color: '#555', textDecoration: 'line-through', fontSize: '1.2rem' }}>{sale.old}</span>
+                  {sale.now}
                 </>
-              ) : fmtP(product.price)}
+              ) : priceDisplay(product)}
             </div>
 
             <p style={{ marginTop: 'auto', color: '#666', fontSize: '0.72rem', lineHeight: 1.6, paddingTop: 16, borderTop: '1px solid #1c1c1c' }}>

@@ -1,11 +1,15 @@
-import { Pizza, Sandwich, Wheat, GlassWater, UtensilsCrossed } from 'lucide-react'
+import { Pizza, Sandwich, Wheat, GlassWater, UtensilsCrossed, Beef, Flame } from 'lucide-react'
 
 // Mapping catégorie -> icône premium (Lucide).
-// Remplace les emojis (🍕🥪🍟🥤) par des icônes fines et cohérentes.
+// Remplace les emojis par des icônes fines et cohérentes.
 // Toute catégorie inconnue ou "Tout" retombe sur l'icône couverts.
 const MAP = {
   pizzas: Pizza,
+  burgers: Beef,
   sandwichs: Sandwich,
+  tacos: UtensilsCrossed,
+  'tex-max': Flame,
+  paninis: Wheat,
   accompagnements: Wheat,
   boissons: GlassWater,
 }

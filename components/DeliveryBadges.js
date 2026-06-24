@@ -5,6 +5,7 @@ import Reveal from './Reveal'
 export default function DeliveryBadges({ config }) {
   const deliveroo = config?.delivery?.deliveroo || DELIVEROO_URL
   const ubereats = config?.delivery?.ubereats
+  const justeat = config?.delivery?.justeat
 
   const linkStyle = {
     textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column',
@@ -28,6 +29,15 @@ export default function DeliveryBadges({ config }) {
               <a href={ubereats} target="_blank" rel="noopener noreferrer" style={linkStyle} onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.1)')} onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}>
                 <iconify-icon icon="simple-icons:ubereats" width="36" style={{ color: '#888' }} />
                 <span style={{ fontSize: 9, color: '#555', fontFamily: 'Oswald', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Uber Eats</span>
+              </a>
+            </>
+          )}
+          {justeat && (
+            <>
+              <div style={{ width: 1, height: 40, background: '#1c1c1c' }} />
+              <a href={justeat} target="_blank" rel="noopener noreferrer" style={linkStyle} onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.1)')} onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}>
+                <iconify-icon icon="simple-icons:justeat" width="36" style={{ color: '#888' }} />
+                <span style={{ fontSize: 9, color: '#555', fontFamily: 'Oswald', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Just Eat</span>
               </a>
             </>
           )}

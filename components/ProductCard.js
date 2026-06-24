@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Flame } from 'lucide-react'
-import { fmtP, hasSale } from '@/lib/format'
+import { priceDisplay, priceSale } from '@/lib/format'
 import CategoryIcon from './CategoryIcon'
 
 // Carte produit premium — clic => ouvre la modale détail.
@@ -11,7 +11,7 @@ import CategoryIcon from './CategoryIcon'
 // à la place d'une icône d'image cassée.
 export default function ProductCard({ product, index = 0, onOpen, displayOnly = false }) {
   const [imgError, setImgError] = useState(false)
-  const sale = hasSale(product)
+  const sale = priceSale(product) // {old,now} si promo, sinon null
 
   return (
     <article
@@ -27,7 +27,7 @@ export default function ProductCard({ product, index = 0, onOpen, displayOnly = 
       }}
     >
       <div className="product-card__media">
-        {!imgError ? (
+        {product.image && !imgError ? (
           <img
             src={product.image}
             alt={product.name}
@@ -63,11 +63,11 @@ export default function ProductCard({ product, index = 0, onOpen, displayOnly = 
           <div className="product-card__price">
             {sale ? (
               <>
-                <span className="product-card__price-old">{fmtP(product.price)}</span>
-                <span className="product-card__price-now">{fmtP(product.salePrice)}</span>
+                <span className="product-card__price-old">{sale.old}</span>
+                <span className="product-card__price-now">{sale.now}</span>
               </>
             ) : (
-              <span className="product-card__price-now">{fmtP(product.price)}</span>
+              <span className={`product-card__price-now${product.priceLabel ? ' product-card__price-now--label' : ''}`}>{priceDisplay(product)}</span>
             )}
           </div>
           <span className="product-card__dot" />
