@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { parseCookies, verifySession, COOKIE_NAME } from '@/lib/auth-session'
 import { LEGAL_PAGE_META, LEGAL_PAGES, seedLegalPages } from '@/lib/legal-content'
+import { pricesToLabel, pricesToBase, priceDisplay } from '@/lib/format'
 
 // Helper de fetch avec cookie de session.
 function adminFetch(path, body) {
@@ -13,7 +14,6 @@ function adminFetch(path, body) {
 const TABS = [
   { id: 'produits', label: 'Produits' },
   { id: 'promos', label: 'Promos' },
-  { id: 'commandes', label: 'Commandes' },
   { id: 'categories', label: 'Catégories' },
   { id: 'infos', label: 'Infos & Légal' },
 ]
@@ -76,7 +76,6 @@ export default function Dashboard({ adminEmail }) {
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: 32 }}>
           {tab === 'produits' && <ProduitsTab data={data} reload={load} />}
           {tab === 'promos' && <PromosTab data={data} reload={load} />}
-          {tab === 'commandes' && <CommandesTab data={data} reload={load} />}
           {tab === 'categories' && <CategoriesTab data={data} reload={load} />}
           {tab === 'infos' && <InfosTab data={data} reload={load} />}
         </div>
@@ -86,20 +85,36 @@ export default function Dashboard({ adminEmail }) {
 }
 
 /* =================== PRODUITS =================== */
+// Charge les prix structurés d'un produit dans l'état d'édition (lignes label+price).
+// Legacy (produits sans `prices`) -> 1 ligne à partir de `price`.
+function toEditingPrices(p) {
+  if (Array.isArray(p.prices) && p.prices.length) {
+    return p.prices.map((l) => ({ label: l.label || '', price: String(l.price ?? '') }))
+  }
+  return [{ label: '', price: String(p.price ?? '') }]
+}
+
 function ProduitsTab({ data, reload }) {
   const [editing, setEditing] = useState(null) // produit en édition (ou {} pour nouveau)
   const cats = data.categories || []
 
   function startNew() {
-    setEditing({ id: '', name: '', description: '', price: '', salePrice: '', saleActive: false, category: cats[0]?.id || '', image: '', badge: '', allergens: '', featured: false, active: true, sortOrder: 0 })
+    setEditing({ id: '', name: '', description: '', prices: [{ label: '', price: '' }], salePrice: '', saleActive: false, category: cats[0]?.id || '', image: '', badge: '', allergens: '', featured: false, active: true, sortOrder: 0 })
   }
 
   async function save() {
+    // Régénère prices (nettoyé) + price/priceLabel dérivés.
+    const raw = (editing.prices || [{ label: '', price: '' }])
+      .map((l) => ({ label: (l.label || '').trim(), price: parseFloat(l.price) || 0 }))
+      .filter((l) => l.price > 0 || l.label)
+    const prices = raw.length ? raw : [{ label: '', price: 0 }]
     const p = {
       id: editing.id || undefined,
       name: editing.name,
       description: editing.description,
-      price: parseFloat(editing.price) || 0,
+      prices,
+      price: pricesToBase(prices),
+      priceLabel: pricesToLabel(prices),
       salePrice: editing.salePrice !== '' && editing.salePrice != null ? parseFloat(editing.salePrice) : null,
       saleActive: !!editing.saleActive,
       category: editing.category,
@@ -134,10 +149,10 @@ function ProduitsTab({ data, reload }) {
               {p.featured && <span style={{ color: '#FFD600', fontSize: '0.7rem', marginLeft: 8 }}>★ Mis en avant</span>}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontFamily: 'Oswald', color: '#FFD600' }}>
-                {p.saleActive && p.salePrice != null ? <><s style={{ color: '#555', fontSize: '0.8rem' }}>{Number(p.price).toFixed(2)}€</s> {Number(p.salePrice).toFixed(2)}€</> : Number(p.price).toFixed(2) + '€'}
+              <span style={{ fontFamily: 'Oswald', color: '#FFD600', fontSize: '0.8rem' }}>
+                {p.saleActive && p.salePrice != null && !p.priceLabel ? <><s style={{ color: '#555', fontSize: '0.75rem' }}>{Number(p.price).toFixed(2)}€</s> {Number(p.salePrice).toFixed(2)}€</> : priceDisplay(p)}
               </span>
-              <button onClick={() => setEditing({ ...p, price: String(p.price ?? ''), salePrice: p.salePrice != null ? String(p.salePrice) : '', allergens: (p.allergens || []).join(', ') })} style={miniBtn}>Éditer</button>
+              <button onClick={() => setEditing({ ...p, prices: toEditingPrices(p), salePrice: p.salePrice != null ? String(p.salePrice) : '', allergens: (p.allergens || []).join(', ') })} style={miniBtn}>Éditer</button>
               <button onClick={() => remove(p.id)} style={{ ...miniBtn, color: '#f87171' }}>Suppr.</button>
             </div>
           </div>
@@ -148,19 +163,17 @@ function ProduitsTab({ data, reload }) {
         <Modal onClose={() => setEditing(null)} title={editing.id ? 'Modifier le produit' : 'Nouveau produit'}>
           <Field label="Nom"><input className="form-input" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} style={inputStyle} /></Field>
           <Field label="Description"><textarea className="form-input" rows={2} value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} style={inputStyle} /></Field>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <Field label="Prix (€)"><input className="form-input" type="number" step="0.01" value={editing.price} onChange={(e) => setEditing({ ...editing, price: e.target.value })} /></Field>
-            <Field label="Catégorie">
-              <select className="form-input" value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })}>
-                {cats.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-              </select>
-            </Field>
-          </div>
+          <Field label="Catégorie">
+            <select className="form-input" value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })}>
+              {cats.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>
+          </Field>
+          <PricesEditor prices={editing.prices} setPrices={(prices) => setEditing({ ...editing, prices })} />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <Field label="Prix soldé (€) — laisser vide sinon"><input className="form-input" type="number" step="0.01" value={editing.salePrice} onChange={(e) => setEditing({ ...editing, salePrice: e.target.value })} /></Field>
             <Field label="Badge (ex: 🔥 Best)"><input className="form-input" value={editing.badge || ''} onChange={(e) => setEditing({ ...editing, badge: e.target.value })} /></Field>
           </div>
-          <ImageField value={editing.image} onChange={(v) => setEditing({ ...editing, image: v })} />
+          <ImageField value={editing.image} onChange={(v) => setEditing({ ...editing, image: v })} productId={editing.id} />
           <Field label="Allergènes (séparés par des virgules)"><input className="form-input" value={editing.allergens} onChange={(e) => setEditing({ ...editing, allergens: e.target.value })} style={inputStyle} /></Field>
           <Field label="Ordre (tri)"><input className="form-input" type="number" value={editing.sortOrder} onChange={(e) => setEditing({ ...editing, sortOrder: e.target.value })} style={inputStyle} /></Field>
           <div style={{ display: 'flex', gap: 20, margin: '12px 0 20px' }}>
@@ -175,28 +188,56 @@ function ProduitsTab({ data, reload }) {
   )
 }
 
-/* =================== PROMOS (bannière) =================== */
+/* =================== PROMOS (réduction -X% + bannière) =================== */
+const DAY_LABELS = [
+  { id: 'monday', label: 'Lun' }, { id: 'tuesday', label: 'Mar' }, { id: 'wednesday', label: 'Mer' },
+  { id: 'thursday', label: 'Jeu' }, { id: 'friday', label: 'Ven' }, { id: 'saturday', label: 'Sam' }, { id: 'sunday', label: 'Dim' },
+]
+
 function PromosTab({ data, reload }) {
   const promos = data.promos || []
-  const banner = promos.find((p) => p.type === 'banner') || { id: '', type: 'banner', text: '', active: false }
-  const [text, setText] = useState(banner.text)
-  const [active, setActive] = useState(banner.active)
+  const cats = data.categories || []
+  const deal = promos.find((p) => p.type === 'deal') || { id: '', type: 'deal', text: '', active: false, percent: '', cats: [], days: [] }
+  const [d, setD] = useState(() => ({ ...deal, percent: deal.percent != null ? String(deal.percent) : '', cats: deal.cats || [], days: deal.days || [] }))
+  const [saved, setSaved] = useState(false)
+  const set = (k, v) => setD((p) => ({ ...p, [k]: v }))
+  const toggleCat = (cid) => set('cats', d.cats.includes(cid) ? d.cats.filter((x) => x !== cid) : [...d.cats, cid])
+  const toggleDay = (day) => set('days', d.days.includes(day) ? d.days.filter((x) => x !== day) : [...d.days, day])
 
   async function save() {
-    await fetch('/api/admin/promos', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: banner.id || undefined, type: 'banner', text, active }) })
+    await fetch('/api/admin/promos', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.id || undefined, type: 'deal', text: d.text, active: !!d.active, percent: parseFloat(d.percent) || 0, cats: d.cats, days: d.days }) })
+    setSaved(true); setTimeout(() => setSaved(false), 2000)
     await reload()
   }
 
   return (
     <div>
-      <SectionTitle title="Bannière promo" />
-      <p style={{ color: '#888', fontSize: '0.8rem', marginBottom: 20 }}>Une bannière jaune s'affiche en haut du site quand la promo est active.</p>
-      <Field label="Texte de la promo"><input className="form-input" value={text} onChange={(e) => setText(e.target.value)} placeholder="ex : −20% sur les pizzas ce vendredi !" style={{ marginBottom: 16 }} /></Field>
-      <div style={{ marginBottom: 20 }}><Check label="Activer la bannière" checked={active} onChange={setActive} /></div>
-      <button onClick={save} className="btn-jaune">Enregistrer la promo</button>
+      <SectionTitle title="Promo du moment" />
+      <p style={{ color: '#888', fontSize: '0.8rem', marginBottom: 20 }}>
+        Configurez une réduction : elle s'affiche en <strong>bannière en haut du site</strong> ET <strong>réduit les prix</strong> des catégories ciblées les jours choisis (prix barrés sur la carte).
+      </p>
+      <Field label="Texte de la bannière"><input className="form-input" value={d.text} onChange={(e) => set('text', e.target.value)} placeholder="ex : -20% sur les pizzas tous les vendredis !" style={{ marginBottom: 16 }} /></Field>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 8 }}>
+        <Field label="Réduction (%)"><input className="form-input" type="number" min="0" max="100" step="1" value={d.percent} onChange={(e) => set('percent', e.target.value)} /></Field>
+        <div style={{ paddingTop: 26 }}><Check label="Promo active" checked={!!d.active} onChange={(v) => set('active', v)} /></div>
+      </div>
 
-      <SectionTitle title="Prix soldés" />
-      <p style={{ color: '#888', fontSize: '0.8rem' }}>Pour mettre un produit en promo avec un prix barré : onglet <strong>Produits</strong> → éditer → remplir « Prix soldé » + cocher « En soldes ».</p>
+      <Field label="Catégories concernées (vide = tout le menu)">
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {cats.map((c) => <Check key={c.id} label={`${c.icon || '🍽️'} ${c.label}`} checked={d.cats.includes(c.id)} onChange={() => toggleCat(c.id)} />)}
+        </div>
+      </Field>
+
+      <Field label="Jours actifs (vide = tous les jours)">
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {DAY_LABELS.map((day) => <Check key={day.id} label={day.label} checked={d.days.includes(day.id)} onChange={() => toggleDay(day.id)} />)}
+        </div>
+      </Field>
+
+      <button onClick={save} className="btn-jaune" style={{ marginTop: 12 }}>{saved ? '✓ Enregistré' : 'Enregistrer la promo'}</button>
+
+      <SectionTitle title="Promo par produit (prix barré)" />
+      <p style={{ color: '#888', fontSize: '0.8rem' }}>Pour une promo ciblée sur un seul produit : onglet <strong>Produits</strong> → éditer → « Prix soldé » + cocher « En soldes ».</p>
     </div>
   )
 }
@@ -421,22 +462,88 @@ function SectionTitle({ title, action }) {
 function Field({ label, children }) {
   return <div style={{ marginBottom: 12 }}><label style={lbl}>{label}</label>{children}</div>
 }
+// Éditeur de prix par tailles/formules : liste de lignes (libellé + prix).
+// 1 ligne sans libellé = prix simple ; plusieurs lignes = multi-tailles (J/S/M, Seul/Menu, M/L/XL…).
+function PricesEditor({ prices, setPrices }) {
+  const lines = Array.isArray(prices) && prices.length ? prices : [{ label: '', price: '' }]
+  const update = (i, field, val) => setPrices(lines.map((l, idx) => (idx === i ? { ...l, [field]: val } : l)))
+  const add = () => setPrices([...lines, { label: '', price: '' }])
+  const remove = (i) => setPrices(lines.length > 1 ? lines.filter((_, idx) => idx !== i) : lines)
+  const multi = lines.length > 1
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <label style={lbl}>Prix {multi ? '(une ligne par taille / formule)' : '(€)'}</label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {lines.map((l, i) => (
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 130px auto', gap: 8 }}>
+            <input className="form-input" value={l.label || ''} onChange={(e) => update(i, 'label', e.target.value)} placeholder={multi ? 'Taille/formule (ex : J, M, XL — Seul…)' : 'Laisser vide si prix unique'} />
+            <input className="form-input" type="number" step="0.01" value={l.price} onChange={(e) => update(i, 'price', e.target.value)} placeholder="Prix €" />
+            <button type="button" onClick={() => remove(i)} style={{ ...miniBtn, color: '#f87171' }} disabled={lines.length <= 1} aria-label="Supprimer la ligne">✕</button>
+          </div>
+        ))}
+      </div>
+      <button type="button" onClick={add} className="btn-outline" style={{ fontSize: '0.7rem', padding: '6px 14px', marginTop: 8 }}>+ Ajouter une taille / formule</button>
+    </div>
+  )
+}
 // Champ image avec aperçu en direct : la preview se rafraîchit à chaque
 // modification de l'URL, et signale une image introuvable (onError).
-function ImageField({ value, onChange }) {
+// Champ image : upload (PNG/JPG/WebP), photo en direct (caméra mobile) OU URL.
+// L'upload passe par /api/admin/upload (sharp + Firebase Storage) qui renvoie une URL.
+function ImageField({ value, onChange, productId }) {
   const [err, setErr] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [uploadErr, setUploadErr] = useState('')
   useEffect(() => { setErr(false) }, [value])
+
+  async function uploadFile(file) {
+    setUploadErr('')
+    if (!file) return
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      setUploadErr('Format non supporté : PNG, JPG ou WebP uniquement.'); return
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      setUploadErr('Fichier trop volumineux (max 8 Mo).'); return
+    }
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('productId', productId || '')
+      const r = await fetch('/api/admin/upload', { method: 'POST', body: fd, credentials: 'same-origin' })
+      const data = await r.json().catch(() => ({}))
+      if (!r.ok) throw new Error(data.error || "Échec de l'upload")
+      onChange(data.url)
+    } catch (e) {
+      setUploadErr(e.message)
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const url = (value || '').trim()
   return (
     <div style={{ marginBottom: 12 }}>
-      <label style={lbl}>Image (URL) — aperçu en direct</label>
-      <input className="form-input" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="https://…" style={inputStyle} />
+      <label style={lbl}>Image du produit</label>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+        <label className="btn-outline" style={{ fontSize: '0.7rem', padding: '8px 14px', cursor: 'pointer' }}>
+          📁 Choisir une image
+          <input type="file" accept="image/png,image/jpeg,image/webp" style={{ display: 'none' }} onChange={(e) => uploadFile(e.target.files && e.target.files[0])} />
+        </label>
+        <label className="btn-outline" style={{ fontSize: '0.7rem', padding: '8px 14px', cursor: 'pointer' }}>
+          📸 Prendre une photo
+          <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={(e) => uploadFile(e.target.files && e.target.files[0])} />
+        </label>
+      </div>
+      {uploading && <p style={{ color: '#FFD600', fontSize: '0.72rem', marginBottom: 8 }}>Upload en cours…</p>}
+      {uploadErr && <p style={{ color: '#f87171', fontSize: '0.72rem', marginBottom: 8 }}>⚠ {uploadErr}</p>}
+      <input className="form-input" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="…ou collez une URL https://…" style={inputStyle} />
       <div style={{ marginTop: 8, height: 150, width: '100%', background: '#0a0a0a', border: '1px solid #1c1c1c', borderRadius: 4, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {url && !err ? (
           <img src={url} alt="Aperçu" onError={() => setErr(true)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <span style={{ color: err ? '#f87171' : '#555', fontSize: '0.72rem', textAlign: 'center', padding: 12 }}>
-            {err ? "⚠ Image introuvable — vérifiez l'URL" : url ? 'Chargement…' : "L'aperçu apparaîtra ici"}
+            {err ? "⚠ Image introuvable — vérifiez l'URL" : url ? 'Chargement…' : 'Aperçu : uploadez une photo ou collez une URL'}
           </span>
         )}
       </div>

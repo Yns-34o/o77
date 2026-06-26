@@ -4,10 +4,13 @@ import { Pizza, Sandwich, Wheat, GlassWater, UtensilsCrossed, Beef, Flame } from
 // Remplace les emojis par des icônes fines et cohérentes.
 // Toute catégorie inconnue ou "Tout" retombe sur l'icône couverts.
 const MAP = {
+  'pizzas-tomate': Pizza,
+  'pizzas-creme': Pizza,
   pizzas: Pizza,
   burgers: Beef,
   sandwichs: Sandwich,
   tacos: UtensilsCrossed,
+  'tex-mex': Flame,
   'tex-max': Flame,
   paninis: Wheat,
   accompagnements: Wheat,

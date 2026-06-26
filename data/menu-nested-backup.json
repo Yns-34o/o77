@@ -1,0 +1,609 @@
+{
+  "categories": [
+    {
+      "id": "pizzas-tomate",
+      "nom": "Pizzas Base Sauce Tomate",
+      "produits": [
+        {
+          "id": "marguerita",
+          "nom": "Marguerita",
+          "description": "Tomate San Marzano A.O.P, mozzarella Fior di latte parmesan basilic, huile d'olive",
+          "prix": {
+            "J": 9,
+            "S": 14.5,
+            "M": 20
+          }
+        },
+        {
+          "id": "la-reine",
+          "nom": "La Reine",
+          "description": "Sauce tomate, mozzarella, jambon de dinde, champignons de paris",
+          "prix": {
+            "J": 9,
+            "S": 14.5,
+            "M": 20
+          }
+        },
+        {
+          "id": "campione",
+          "nom": "Campione",
+          "description": "Sauce tomate, mozzarella, viande hachée assaisonnée, champignons de paris, oeuf",
+          "prix": {
+            "J": 9,
+            "S": 15,
+            "M": 21
+          }
+        },
+        {
+          "id": "fruits-de-mer",
+          "nom": "Fruits de Mer",
+          "description": "Sauce tomate, mozzarella, cocktail de fruits de mer assaisonnée à l'ail et persil",
+          "prix": {
+            "J": 9,
+            "S": 15,
+            "M": 21
+          }
+        },
+        {
+          "id": "regina",
+          "nom": "Regina",
+          "description": "Sauce tomate, mozzarella, Chorizo de boeuf, champignons de paris, olives",
+          "prix": {
+            "J": 9,
+            "S": 15,
+            "M": 21
+          }
+        },
+        {
+          "id": "4-saisons",
+          "nom": "4 Saisons",
+          "description": "Sauce tomate, mozzarella, jambon de dinde, champignons de paris, coeurs d'artichauts, olives",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "kebab-pizza",
+          "nom": "Kebab",
+          "description": "Sauce tomate, mozzarella, viande de kebab, cheddar fondu, tomates cerises, oignons rouges, olives",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "calzone",
+          "nom": "Calzone",
+          "description": "Sauce tomate, mozzarella, oeuf, jambon de dinde ou viande hachée ou thon",
+          "prix": {
+            "J": 9,
+            "S": 14.5,
+            "M": 20
+          }
+        },
+        {
+          "id": "vegetarienne",
+          "nom": "Végétarienne",
+          "description": "Sauce tomate, mozzarella, duo de poivrons, champignons de paris, tomates cerises, olives",
+          "prix": {
+            "J": 9,
+            "S": 14.5,
+            "M": 20
+          }
+        },
+        {
+          "id": "4-fromages",
+          "nom": "4 Fromages",
+          "description": "Sauce tomate, mozzarella, gorgonzola, provolone, emmental rapé",
+          "prix": {
+            "J": 9,
+            "S": 15,
+            "M": 21
+          }
+        },
+        {
+          "id": "pecheur",
+          "nom": "Pêcheur",
+          "description": "Sauce tomate, mozzarella, thon, olives, oeuf",
+          "prix": {
+            "J": 9,
+            "S": 15,
+            "M": 21
+          }
+        },
+        {
+          "id": "orientale",
+          "nom": "Orientale",
+          "description": "Sauce tomate, mozzarella, merguez douces, champignons de paris, oeuf",
+          "prix": {
+            "J": 9,
+            "S": 15,
+            "M": 21
+          }
+        },
+        {
+          "id": "mexicaine",
+          "nom": "Mexicaine",
+          "description": "Sauce tomate, mozzarella, merguez douces, pepperoni de boeuf, duo de poivrons, olives",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        }
+      ]
+    },
+    {
+      "id": "pizzas-creme",
+      "nom": "Pizzas Base Crème Fraîche",
+      "produits": [
+        {
+          "id": "norvegienne",
+          "nom": "Norvégienne",
+          "description": "Crème fraîche Française, mozzarella, saumon fumé",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "chevre-miel",
+          "nom": "Chèvre Miel",
+          "description": "Crème fraîche Française, mozzarella, fromage de chèvre",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "chicken",
+          "nom": "Chicken",
+          "description": "Crème fraîche Française, mozzarella, tranches de poulet fumé, cubes de pommes de terre",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "paysanne",
+          "nom": "Paysanne",
+          "description": "Crème fraîche Française, mozzarella, jambon de dinde, cubes de pommes de terre, oignons rouges",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "tacoseria",
+          "nom": "Tacoseria",
+          "description": "Crème fraîche Française, mozzarella, lamelles de poulet, duo de poivrons, boursin, oignons rouges",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "country",
+          "nom": "Country",
+          "description": "Crème fraîche Française, mozzarella, viande hachée assaisonnée cubes de pommes de terre, olives",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "western",
+          "nom": "Western",
+          "description": "Crème fraîche Française, mozzarella, lamelles de poulet champignons de paris, duo de poivrons",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "boursin",
+          "nom": "Boursin",
+          "description": "Crème fraîche Française, mozzarella, viande hachée assaisonnée, lamelles de poulet, cubes de pommes de terre, boursin",
+          "prix": {
+            "J": 9.9,
+            "S": 18,
+            "M": 24
+          }
+        },
+        {
+          "id": "milano",
+          "nom": "Milano",
+          "description": "Crème fraîche Française, mozzarella, dés de veau fumé, oeuf, cubes de pommes de terre",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        },
+        {
+          "id": "chicago",
+          "nom": "Chicago",
+          "description": "Crème fraîche Française, mozzarella, viande hachée assaisonnée, jambon de dinde, cheddar, oeuf",
+          "prix": {
+            "J": 9,
+            "S": 16.5,
+            "M": 23
+          }
+        }
+      ]
+    },
+    {
+      "id": "burgers",
+      "nom": "Nos Burgers",
+      "note": "Menu servi avec frites et boisson",
+      "produits": [
+        {
+          "id": "cheese",
+          "nom": "Cheese",
+          "description": "1 steak 45g, 1 fromage, sauce maison",
+          "prix": {
+            "seul": 6,
+            "menu": 8
+          }
+        },
+        {
+          "id": "double-cheese",
+          "nom": "Double Cheese",
+          "description": "2 steaks 45g, double fromage, sauce maison",
+          "prix": {
+            "seul": 7,
+            "menu": 9
+          }
+        },
+        {
+          "id": "chicken-burger",
+          "nom": "Chicken Burger",
+          "description": "Poulet pané, fromage, sauce maison",
+          "prix": {
+            "seul": 7,
+            "menu": 9
+          }
+        },
+        {
+          "id": "max-chicken",
+          "nom": "Max Chicken",
+          "description": "Poulet pané, galette pdt, salade, fromage, sauce maison",
+          "prix": {
+            "seul": 7.5,
+            "menu": 9.5
+          }
+        },
+        {
+          "id": "claque",
+          "nom": "Claque",
+          "description": "1 steak 180g, double fromage, sauce maison",
+          "prix": {
+            "seul": 8,
+            "menu": 10
+          }
+        },
+        {
+          "id": "double-claque",
+          "nom": "Double Claque",
+          "description": "2 steaks 180g, triple fromage, sauce maison",
+          "prix": {
+            "seul": 9.5,
+            "menu": 11.5
+          }
+        },
+        {
+          "id": "big",
+          "nom": "BiG",
+          "description": "2 steaks 45g, pain central, fromage, sauce maison",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.7
+          }
+        },
+        {
+          "id": "big-max",
+          "nom": "Big Max",
+          "description": "4 steaks 45g, pain central, fromage, sauce maison",
+          "prix": {
+            "seul": 9,
+            "menu": 11
+          }
+        },
+        {
+          "id": "tasty",
+          "nom": "Tasty",
+          "description": "1 steak 90g, fromage, sauce maison",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.7
+          }
+        },
+        {
+          "id": "tasty-max",
+          "nom": "Tasty Max",
+          "description": "2 steaks 90g, double fromage, sauce maison",
+          "prix": {
+            "seul": 9,
+            "menu": 11
+          }
+        },
+        {
+          "id": "giant",
+          "nom": "Giant",
+          "description": "2 steaks 45g, salade, oignon, fromage, sauce giant",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.7
+          }
+        },
+        {
+          "id": "big-chef",
+          "nom": "Big Chef",
+          "description": "1 steak 180g, escalope de poulet, double fromage",
+          "prix": {
+            "seul": 9,
+            "menu": 11
+          }
+        }
+      ]
+    },
+    {
+      "id": "sandwichs",
+      "nom": "Nos Sandwichs",
+      "produits": [
+        {
+          "id": "kebab",
+          "nom": "Kebab",
+          "description": "Viande de kebab",
+          "prix": {
+            "seul": null,
+            "menu": 10
+          }
+        },
+        {
+          "id": "o77",
+          "nom": "O'77",
+          "description": "3 steaks, double fromage, jambon fumée, oeuf, boursin",
+          "prix": {
+            "seul": 9,
+            "menu": 11
+          }
+        },
+        {
+          "id": "radical",
+          "nom": "Radical",
+          "description": "2 steaks, cordon bleu, fromage",
+          "prix": {
+            "seul": 9,
+            "menu": 11
+          }
+        },
+        {
+          "id": "chicken-curry-tandoori",
+          "nom": "Chicken Curry / Tandoori",
+          "description": "Poulet mariné curry ou tandoori",
+          "prix": {
+            "seul": 8.5,
+            "menu": 10.5
+          }
+        },
+        {
+          "id": "chicken-boursin",
+          "nom": "Chicken Boursin",
+          "description": "Chicken tandoori, oeuf, tranches de poulet fumé, cheddar, boursin",
+          "prix": {
+            "seul": 9,
+            "menu": 11
+          }
+        },
+        {
+          "id": "mix",
+          "nom": "Mix",
+          "description": "Chicken curry, 2 steaks, fromage",
+          "prix": {
+            "seul": 9.5,
+            "menu": 11.5
+          }
+        },
+        {
+          "id": "triple",
+          "nom": "Triple",
+          "description": "3 steaks, jambon, fromage",
+          "prix": {
+            "seul": 8.5,
+            "menu": 10.5
+          }
+        },
+        {
+          "id": "escalope-du-chef",
+          "nom": "Escalope du Chef",
+          "description": "Escalope, crème fraîche, champignons, fromage",
+          "prix": {
+            "seul": 9,
+            "menu": 11
+          }
+        },
+        {
+          "id": "mexicain",
+          "nom": "Mexicain",
+          "description": "Chicken curry, poivron, oignon, olive, sauce chili",
+          "prix": {
+            "seul": 9.5,
+            "menu": 11.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "tacos",
+      "nom": "Nos Tacos",
+      "note": "Viande au choix : Kebab, Steak, Poulet, Viande hachée, Cordon bleu, Tenders, Nuggets, Merguez",
+      "supplements": {
+        "ingredient": 1.2,
+        "charcuterie": 1.5
+      },
+      "tailles": [
+        {
+          "taille": "M",
+          "seul": 8.5,
+          "menu": 10.5
+        },
+        {
+          "taille": "L",
+          "seul": 9.5,
+          "menu": 11.5
+        },
+        {
+          "taille": "XL",
+          "seul": 11.5,
+          "menu": 13.5
+        }
+      ],
+      "produits": [
+        {
+          "id": "tacos",
+          "nom": "Tacos",
+          "description": "Viande au choix : Kebab, Steak, Poulet, Viande hachée, Cordon bleu, Tenders, Nuggets, Merguez",
+          "prix": {
+            "M": {
+              "seul": 8.5,
+              "menu": 10.5
+            },
+            "L": {
+              "seul": 9.5,
+              "menu": 11.5
+            },
+            "XL": {
+              "seul": 11.5,
+              "menu": 13.5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tex-mex",
+      "nom": "Tex Mex",
+      "produits": [
+        {
+          "id": "nuggets-8",
+          "nom": "Nuggets x8",
+          "prix": 5
+        },
+        {
+          "id": "nuggets-15",
+          "nom": "Nuggets x15",
+          "prix": 9
+        },
+        {
+          "id": "wings-6",
+          "nom": "Wings x6",
+          "prix": 5
+        },
+        {
+          "id": "wings-10",
+          "nom": "Wings x10",
+          "prix": 9
+        },
+        {
+          "id": "onion-rings",
+          "nom": "Onion Rings x10",
+          "prix": 5.5
+        },
+        {
+          "id": "mozza-sticks",
+          "nom": "Mozza Sticks x5",
+          "prix": 5.5
+        },
+        {
+          "id": "calamar-frits",
+          "nom": "Calamar Frits x10",
+          "prix": 6.5
+        }
+      ]
+    },
+    {
+      "id": "paninis",
+      "nom": "Nos Paninis",
+      "prix": {
+        "seul": 7.7,
+        "menu": 9.5
+      },
+      "produits": [
+        {
+          "id": "viande-hachee-panini",
+          "nom": "Viande Hachée",
+          "description": "Viande hachée, mozzarella, sauce tomate",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.5
+          }
+        },
+        {
+          "id": "chevre-miel-panini",
+          "nom": "Chèvre Miel",
+          "description": "Chèvre, miel, mozzarella, crème fraîche",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.5
+          }
+        },
+        {
+          "id": "fermier",
+          "nom": "Fermier",
+          "description": "Poulet fumé, mozzarella, crème fraîche",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.5
+          }
+        },
+        {
+          "id": "fromage-panini",
+          "nom": "Fromage",
+          "description": "Gorgonzola, mozzarella, fromage",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.5
+          }
+        },
+        {
+          "id": "pecheur-panini",
+          "nom": "Pêcheur",
+          "description": "Thon, mozzarella, sauce tomate",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.5
+          }
+        },
+        {
+          "id": "ocean",
+          "nom": "Océan",
+          "description": "Saumon fumé, mozzarella, crème fraîche",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.5
+          }
+        },
+        {
+          "id": "jambon",
+          "nom": "Jambon",
+          "description": "Jambon de dinde, mozzarella, sauce tomate",
+          "prix": {
+            "seul": 7.7,
+            "menu": 9.5
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1514 @@
+{
+  "backedUpAt": "2026-06-26T01:54:28.464Z",
+  "categories": [
+    {
+      "id": "burgers",
+      "label": "Nos Burgers",
+      "icon": "🍔",
+      "sortOrder": 2,
+      "active": true,
+      "image": "/carte/burger.webp",
+      "note": "Menu servi avec frites et boisson",
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "paninis",
+      "label": "Nos Paninis",
+      "icon": "🥖",
+      "sortOrder": 6,
+      "active": true,
+      "image": "/carte/panini.webp",
+      "note": null,
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "pizzas-creme",
+      "label": "Pizzas Base Crème Fraîche",
+      "icon": "🍕",
+      "sortOrder": 1,
+      "active": true,
+      "image": "/carte/pizza-creme.webp",
+      "note": null,
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "pizzas-tomate",
+      "label": "Pizzas Base Sauce Tomate",
+      "icon": "🍕",
+      "sortOrder": 0,
+      "active": true,
+      "image": "/carte/pizza-tomate.webp",
+      "note": null,
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "sandwichs",
+      "label": "Nos Sandwichs",
+      "icon": "🥪",
+      "sortOrder": 3,
+      "active": true,
+      "image": "/carte/sandwich.webp",
+      "note": null,
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "tacos",
+      "label": "Nos Tacos",
+      "icon": "🌮",
+      "sortOrder": 4,
+      "active": true,
+      "image": "/carte/tacos.webp",
+      "note": "Viande au choix : Kebab, Steak, Poulet, Viande hachée, Cordon bleu, Tenders, Nuggets, Merguez",
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "tex-mex",
+      "label": "Tex Mex",
+      "icon": "🍟",
+      "sortOrder": 5,
+      "active": true,
+      "image": "/carte/tex-mex.webp",
+      "note": null,
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    }
+  ],
+  "products": [
+    {
+      "id": "4-fromages",
+      "name": "4 Fromages",
+      "description": "Sauce tomate, mozzarella, gorgonzola, provolone, emmental rapé",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 15,00 € · M 21,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-4-fromages.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 9,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "4-saisons",
+      "name": "4 Saisons",
+      "description": "Sauce tomate, mozzarella, jambon de dinde, champignons de paris, coeurs d'artichauts, olives",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-4-saisons.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 5,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "big",
+      "name": "BiG",
+      "description": "2 steaks 45g, pain central, fromage, sauce maison",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,70 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-big.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 6,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "big-chef",
+      "name": "Big Chef",
+      "description": "1 steak 180g, escalope de poulet, double fromage",
+      "price": 9,
+      "priceLabel": "Seul 9,00 € · Menu 11,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-big-chef.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": true,
+      "active": true,
+      "sortOrder": 11,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "big-max",
+      "name": "Big Max",
+      "description": "4 steaks 45g, pain central, fromage, sauce maison",
+      "price": 9,
+      "priceLabel": "Seul 9,00 € · Menu 11,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-big-max.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 7,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "boursin",
+      "name": "Boursin",
+      "description": "Crème fraîche Française, mozzarella, viande hachée assaisonnée, lamelles de poulet, cubes de pommes de terre, boursin",
+      "price": 9.9,
+      "priceLabel": "J 9,90 € · S 18,00 € · M 24,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-boursin.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 7,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "calamar-frits",
+      "name": "Calamar Frits x10",
+      "description": "",
+      "price": 6.5,
+      "priceLabel": null,
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tex-mex",
+      "image": "/carte/prod-calamar-frits.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 6,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "calzone",
+      "name": "Calzone",
+      "description": "Sauce tomate, mozzarella, oeuf, jambon de dinde ou viande hachée ou thon",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 14,50 € · M 20,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-calzone.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 7,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "campione",
+      "name": "Campione",
+      "description": "Sauce tomate, mozzarella, viande hachée assaisonnée, champignons de paris, oeuf",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 15,00 € · M 21,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-campione.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": true,
+      "active": true,
+      "sortOrder": 2,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "cheese",
+      "name": "Cheese",
+      "description": "1 steak 45g, 1 fromage, sauce maison",
+      "price": 6,
+      "priceLabel": "Seul 6,00 € · Menu 8,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-cheese.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 0,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "chevre-miel",
+      "name": "Chèvre Miel",
+      "description": "Crème fraîche Française, mozzarella, fromage de chèvre",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-chevre-miel.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 1,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "chevre-miel-panini",
+      "name": "Chèvre Miel",
+      "description": "Chèvre, miel, mozzarella, crème fraîche",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "paninis",
+      "image": "/carte/prod-chevre-miel-panini.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 1,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "chicago",
+      "name": "Chicago",
+      "description": "Crème fraîche Française, mozzarella, viande hachée assaisonnée, jambon de dinde, cheddar, oeuf",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-chicago.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 9,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "chicken",
+      "name": "Chicken",
+      "description": "Crème fraîche Française, mozzarella, tranches de poulet fumé, cubes de pommes de terre",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-chicken.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 2,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "chicken-boursin",
+      "name": "Chicken Boursin",
+      "description": "Chicken tandoori, oeuf, tranches de poulet fumé, cheddar, boursin",
+      "price": 9,
+      "priceLabel": "Seul 9,00 € · Menu 11,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-chicken-boursin.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 4,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "chicken-burger",
+      "name": "Chicken Burger",
+      "description": "Poulet pané, fromage, sauce maison",
+      "price": 7,
+      "priceLabel": "Seul 7,00 € · Menu 9,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-chicken-burger.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 2,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "chicken-curry-tandoori",
+      "name": "Chicken Curry / Tandoori",
+      "description": "Poulet mariné curry ou tandoori",
+      "price": 8.5,
+      "priceLabel": "Seul 8,50 € · Menu 10,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-chicken-curry-tandoori.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 3,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "claque",
+      "name": "Claque",
+      "description": "1 steak 180g, double fromage, sauce maison",
+      "price": 8,
+      "priceLabel": "Seul 8,00 € · Menu 10,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-claque.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 4,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "country",
+      "name": "Country",
+      "description": "Crème fraîche Française, mozzarella, viande hachée assaisonnée cubes de pommes de terre, olives",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-country.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 5,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "double-cheese",
+      "name": "Double Cheese",
+      "description": "2 steaks 45g, double fromage, sauce maison",
+      "price": 7,
+      "priceLabel": "Seul 7,00 € · Menu 9,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-double-cheese.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": true,
+      "active": true,
+      "sortOrder": 1,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "double-claque",
+      "name": "Double Claque",
+      "description": "2 steaks 180g, triple fromage, sauce maison",
+      "price": 9.5,
+      "priceLabel": "Seul 9,50 € · Menu 11,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-double-claque.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 5,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "escalope-du-chef",
+      "name": "Escalope du Chef",
+      "description": "Escalope, crème fraîche, champignons, fromage",
+      "price": 9,
+      "priceLabel": "Seul 9,00 € · Menu 11,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-escalope-du-chef.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 7,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "fermier",
+      "name": "Fermier",
+      "description": "Poulet fumé, mozzarella, crème fraîche",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "paninis",
+      "image": "/carte/prod-fermier.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 2,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "fromage-panini",
+      "name": "Fromage",
+      "description": "Gorgonzola, mozzarella, fromage",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "paninis",
+      "image": "/carte/prod-fromage-panini.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 3,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "fruits-de-mer",
+      "name": "Fruits de Mer",
+      "description": "Sauce tomate, mozzarella, cocktail de fruits de mer assaisonnée à l'ail et persil",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 15,00 € · M 21,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-fruits-de-mer.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 3,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "giant",
+      "name": "Giant",
+      "description": "2 steaks 45g, salade, oignon, fromage, sauce giant",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,70 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-giant.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 10,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "jambon",
+      "name": "Jambon",
+      "description": "Jambon de dinde, mozzarella, sauce tomate",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "paninis",
+      "image": "/carte/prod-jambon.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 6,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "kebab",
+      "name": "Kebab",
+      "description": "Viande de kebab",
+      "price": 10,
+      "priceLabel": "Menu 10,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-kebab.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 0,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "kebab-pizza",
+      "name": "Kebab",
+      "description": "Sauce tomate, mozzarella, viande de kebab, cheddar fondu, tomates cerises, oignons rouges, olives",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-kebab-pizza.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 6,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "la-reine",
+      "name": "La Reine",
+      "description": "Sauce tomate, mozzarella, jambon de dinde, champignons de paris",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 14,50 € · M 20,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-la-reine.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 1,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "marguerita",
+      "name": "Marguerita",
+      "description": "Tomate San Marzano A.O.P, mozzarella Fior di latte parmesan basilic, huile d'olive",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 14,50 € · M 20,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-marguerita.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": true,
+      "active": true,
+      "sortOrder": 0,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "max-chicken",
+      "name": "Max Chicken",
+      "description": "Poulet pané, galette pdt, salade, fromage, sauce maison",
+      "price": 7.5,
+      "priceLabel": "Seul 7,50 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-max-chicken.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 3,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "mexicain",
+      "name": "Mexicain",
+      "description": "Chicken curry, poivron, oignon, olive, sauce chili",
+      "price": 9.5,
+      "priceLabel": "Seul 9,50 € · Menu 11,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-mexicain.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 8,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "mexicaine",
+      "name": "Mexicaine",
+      "description": "Sauce tomate, mozzarella, merguez douces, pepperoni de boeuf, duo de poivrons, olives",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-mexicaine.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 12,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "milano",
+      "name": "Milano",
+      "description": "Crème fraîche Française, mozzarella, dés de veau fumé, oeuf, cubes de pommes de terre",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-milano.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 8,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "mix",
+      "name": "Mix",
+      "description": "Chicken curry, 2 steaks, fromage",
+      "price": 9.5,
+      "priceLabel": "Seul 9,50 € · Menu 11,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-mix.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 5,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "mozza-sticks",
+      "name": "Mozza Sticks x5",
+      "description": "",
+      "price": 5.5,
+      "priceLabel": null,
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tex-mex",
+      "image": "/carte/prod-mozza-sticks.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 5,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "norvegienne",
+      "name": "Norvégienne",
+      "description": "Crème fraîche Française, mozzarella, saumon fumé",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-norvegienne.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 0,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "nuggets-15",
+      "name": "Nuggets x15",
+      "description": "",
+      "price": 9,
+      "priceLabel": null,
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tex-mex",
+      "image": "/carte/prod-nuggets-8.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 1,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "nuggets-8",
+      "name": "Nuggets x8",
+      "description": "",
+      "price": 5,
+      "priceLabel": null,
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tex-mex",
+      "image": "/carte/prod-nuggets-8.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 0,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "o77",
+      "name": "O'77",
+      "description": "3 steaks, double fromage, jambon fumée, oeuf, boursin",
+      "price": 9,
+      "priceLabel": "Seul 9,00 € · Menu 11,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-o77.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": true,
+      "active": true,
+      "sortOrder": 1,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "ocean",
+      "name": "Océan",
+      "description": "Saumon fumé, mozzarella, crème fraîche",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "paninis",
+      "image": "/carte/prod-ocean.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 5,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "onion-rings",
+      "name": "Onion Rings x10",
+      "description": "",
+      "price": 5.5,
+      "priceLabel": null,
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tex-mex",
+      "image": "/carte/prod-onion-rings.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 4,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "orientale",
+      "name": "Orientale",
+      "description": "Sauce tomate, mozzarella, merguez douces, champignons de paris, oeuf",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 15,00 € · M 21,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-orientale.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 11,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "paysanne",
+      "name": "Paysanne",
+      "description": "Crème fraîche Française, mozzarella, jambon de dinde, cubes de pommes de terre, oignons rouges",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-paysanne.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 3,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "pecheur",
+      "name": "Pêcheur",
+      "description": "Sauce tomate, mozzarella, thon, olives, oeuf",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 15,00 € · M 21,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-pecheur.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 10,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "pecheur-panini",
+      "name": "Pêcheur",
+      "description": "Thon, mozzarella, sauce tomate",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "paninis",
+      "image": "/carte/prod-pecheur-panini.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 4,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "radical",
+      "name": "Radical",
+      "description": "2 steaks, cordon bleu, fromage",
+      "price": 9,
+      "priceLabel": "Seul 9,00 € · Menu 11,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-radical.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 2,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "regina",
+      "name": "Regina",
+      "description": "Sauce tomate, mozzarella, Chorizo de boeuf, champignons de paris, olives",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 15,00 € · M 21,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-regina.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 4,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "tacos",
+      "name": "Tacos",
+      "description": "Viande au choix : Kebab, Steak, Poulet, Viande hachée, Cordon bleu, Tenders, Nuggets, Merguez",
+      "price": 8.5,
+      "priceLabel": "M 8,50 € / 10,50 € · L 9,50 € / 11,50 € · XL 11,50 € / 13,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tacos",
+      "image": "/carte/prod-tacos.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 0,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "tacoseria",
+      "name": "Tacoseria",
+      "description": "Crème fraîche Française, mozzarella, lamelles de poulet, duo de poivrons, boursin, oignons rouges",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-tacoseria.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 4,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "tasty",
+      "name": "Tasty",
+      "description": "1 steak 90g, fromage, sauce maison",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,70 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-tasty.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 8,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "tasty-max",
+      "name": "Tasty Max",
+      "description": "2 steaks 90g, double fromage, sauce maison",
+      "price": 9,
+      "priceLabel": "Seul 9,00 € · Menu 11,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "burgers",
+      "image": "/carte/prod-tasty-max.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 9,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "triple",
+      "name": "Triple",
+      "description": "3 steaks, jambon, fromage",
+      "price": 8.5,
+      "priceLabel": "Seul 8,50 € · Menu 10,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "sandwichs",
+      "image": "/carte/prod-triple.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 6,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "vegetarienne",
+      "name": "Végétarienne",
+      "description": "Sauce tomate, mozzarella, duo de poivrons, champignons de paris, tomates cerises, olives",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 14,50 € · M 20,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-tomate",
+      "image": "/carte/prod-vegetarienne.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 8,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "viande-hachee-panini",
+      "name": "Viande Hachée",
+      "description": "Viande hachée, mozzarella, sauce tomate",
+      "price": 7.7,
+      "priceLabel": "Seul 7,70 € · Menu 9,50 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "paninis",
+      "image": "/carte/prod-viande-hachee-panini.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 0,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "western",
+      "name": "Western",
+      "description": "Crème fraîche Française, mozzarella, lamelles de poulet champignons de paris, duo de poivrons",
+      "price": 9,
+      "priceLabel": "J 9,00 € · S 16,50 € · M 23,00 €",
+      "salePrice": null,
+      "saleActive": false,
+      "category": "pizzas-creme",
+      "image": "/carte/prod-western.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 6,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "wings-10",
+      "name": "Wings x10",
+      "description": "",
+      "price": 9,
+      "priceLabel": null,
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tex-mex",
+      "image": "/carte/prod-wings-6.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 3,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    },
+    {
+      "id": "wings-6",
+      "name": "Wings x6",
+      "description": "",
+      "price": 5,
+      "priceLabel": null,
+      "salePrice": null,
+      "saleActive": false,
+      "category": "tex-mex",
+      "image": "/carte/prod-wings-6.webp",
+      "allergens": [],
+      "badge": null,
+      "featured": false,
+      "active": true,
+      "sortOrder": 2,
+      "createdAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      },
+      "updatedAt": {
+        "_seconds": 1782437069,
+        "_nanoseconds": 243000000
+      }
+    }
+  ]
+}

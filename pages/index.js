@@ -21,8 +21,8 @@ export default function Home({ products, banner, config }) {
         path="/"
       />
 
+      {banner && <PromoBanner text={banner.text} sticky />}
       <Hero config={config} />
-      {banner && <PromoBanner text={banner.text} />}
       <Marquee />
 
       {/* Badge Google */}
