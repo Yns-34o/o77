@@ -27,3 +27,6 @@ yarn-error.log*
 .firebase/
 firestore-debug.log
 ui-debug.log
+
+# uploads (photos produits/catégories — stockage local, contenu généré)
+/public/uploads/

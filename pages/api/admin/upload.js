@@ -1,28 +1,26 @@
 import busboy from 'busboy'
 import sharp from 'sharp'
-import { bucket } from '@/lib/firebase-admin'
+import fs from 'fs/promises'
+import path from 'path'
 import { checkAuth } from '@/lib/auth-session'
 
-// Upload d'une image (produit OU catégorie) -> Firebase Storage.
-// Objectif : qualité maximale SANS altérer le contenu (pas de crop, pas de filtre
-// artistique). On préserve/améliore seulement la définition :
+// Upload d'une image (produit OU catégorie) -> dossier public/uploads/ du site.
+// Stockage local gratuit : aucun service externe, aucune carte bancaire requise.
+// Qualité maximale SANS altérer le contenu :
 //   - rotation EXIF (orientation correcte des photos de téléphone)
 //   - qualité WebP 95 (quasi sans perte visuelle)
-//   - résolution préservée : grand côté plafonné à 2000px (au lieu de 1000 avant)
-//   - UPSCALE x2 des petites images (< 900px) au noyau Lanczos3 + sharpen léger,
-//     pour gagner en netteté perçue même sur une photo prise sur le moment.
+//   - grand côté plafonné à 2000px
 //
 // POST multipart/form-data :
 //   - file : l'image (obligatoire)
 //   - id   : identifiant pour le nommage (productId / categoryId) — optionnel
-//   - kind : 'product' (défaut) | 'category' -> dossier de stockage
+//   - kind : 'product' (défaut) | 'category' -> sous-dossier
 // Réponse : { url, path }
 export const config = { api: { bodyParser: false } }
 
 const ALLOWED = new Set(['image/png', 'image/jpeg', 'image/webp'])
 const MAX_BYTES = 12 * 1024 * 1024 // 12 Mo (tolérance : on ré-encode ensuite)
 const MAX_DIM = 2000              // dimension maximale de sortie (grand côté)
-const UPSCALE_BELOW = 900         // en dessous : on agrandit x2 (jusqu'à ~1800)
 
 // Parse multipart -> { file: { buffer, mimeType, size }, id, kind }
 function parseMultipart(req) {
@@ -62,34 +60,33 @@ export default async function handler(req, res) {
     if (!file) return res.status(400).json({ error: 'Aucun fichier reçu' })
     if (!ALLOWED.has(file.mimeType)) return res.status(415).json({ error: 'Format non supporté (PNG, JPG ou WebP uniquement)' })
 
-    // Décide du resize/upscale selon la résolution source.
+    // Optimisation : orientation EXIF + plafond de résolution + WebP qualité 95.
     const meta = await sharp(file.buffer).metadata()
     const w = meta.width || 0
     let pipeline = sharp(file.buffer).rotate() // orientation EXIF corrigée
-    if (w > 0 && w < UPSCALE_BELOW) {
-      // Petite photo : on augmente la définition x2 (Lanczos3) sans dépasser MAX_DIM.
-      pipeline = pipeline.resize({ width: Math.min(MAX_DIM, w * 2), kernel: 'lanczos3' })
-    } else if (w > MAX_DIM) {
-      // Grande image : on plafonne (sans agrandir) pour rester raisonnable.
+    if (w > MAX_DIM) {
       pipeline = pipeline.resize(MAX_DIM, MAX_DIM, { fit: 'inside', withoutEnlargement: true })
     }
-
     const optimized = await pipeline
-      .sharpen({ sigma: 0.6 })  // netteté perçue (compense le resize/upscale)
+      .sharpen({ sigma: 0.6 })  // netteté perçue (compense le resize)
       .webp({ quality: 95 })    // qualité maximale, quasi sans perte
       .toBuffer()
 
-    const folder = kind === 'category' ? 'categories' : 'products'
+    const sub = kind === 'category' ? 'categories' : 'products'
     const slug = (id || (kind === 'category' ? 'cat' : 'prod')).toString().replace(/[^a-z0-9-]/gi, '-').toLowerCase().slice(0, 40)
-    const path = `${folder}/${slug}-${Date.now()}.webp`
-    const f = bucket.file(path)
-    await f.save(optimized, { metadata: { contentType: 'image/webp' } })
-    await f.makePublic()
+    const filename = `${slug}-${Date.now()}.webp`
+    const dir = path.join(process.cwd(), 'public', 'uploads', sub)
+    await fs.mkdir(dir, { recursive: true })
+    await fs.writeFile(path.join(dir, filename), optimized)
 
-    const url = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(path)}?alt=media`
-    return res.status(200).json({ url, path })
+    const url = `/uploads/${sub}/${filename}`
+    return res.status(200).json({ url, path: `uploads/${sub}/${filename}` })
   } catch (e) {
     console.error('upload:', e)
+    const msg = (e.message || '').toLowerCase()
+    if (msg.includes('enospc')) {
+      return res.status(500).json({ error: "Plus d'espace disque disponible sur le serveur." })
+    }
     return res.status(500).json({ error: e.message || 'Échec de l\'upload' })
   }
 }
