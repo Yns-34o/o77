@@ -14,7 +14,7 @@ export default function Cgu({ legal }) {
 
       <h2>Article 1 — Objet</h2>
       <p>
-        Le site a pour objet de présenter l'établissement O'77, sa carte, ses prix, ses horaires, et de permettre la pré-commande Click &amp; Collect ainsi que la redirection vers la plateforme de livraison partenaire (Deliveroo).
+        Le site a pour objet de présenter l'établissement O'77, sa carte, ses prix, ses horaires, et de permettre la pré-commande à emporter ainsi que la redirection vers la plateforme de livraison partenaire (Deliveroo).
       </p>
 
       <h2>Article 2 — Accès au site</h2>
@@ -29,7 +29,7 @@ export default function Cgu({ legal }) {
         <li>Les informations saisies dans les formulaires (pré-commande, contact) doivent être exactes.</li>
       </ul>
 
-      <h2>Article 4 — Pré-commandes Click &amp; Collect</h2>
+      <h2>Article 4 — Pré-commandes à emporter</h2>
       <p>
         La pré-commande via le site constitue une demande qui sera traitée par O'77. Le retrait s'effectue à l'adresse {legal.address}, à la date et l'heure choisies. Le paiement se fait sur place.
       </p>

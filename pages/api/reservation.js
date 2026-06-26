@@ -1,4 +1,4 @@
-// Réception d'une pré-commande Click & Collect -> collection Firestore 'preorders'.
+// Réception d'une pré-commande à emporter -> collection Firestore 'preorders'.
 import { db } from '../../lib/firebase-admin'
 
 export default async function handler(req, res) {

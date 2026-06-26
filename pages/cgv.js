@@ -9,7 +9,7 @@ export default function Cgv({ legal, sections }) {
     <LegalLayout
       title="CGV"
       path="/cgv"
-      description="Conditions Générales de Vente d'O'77, fast-food & pizzeria à Pontault-Combault : commandes, click & collect, livraison, prix, allergènes, rétractation."
+      description="Conditions Générales de Vente d'O'77, fast-food & pizzeria à Pontault-Combault : commandes à emporter, livraison, prix, allergènes, rétractation."
       updated={legal.updated}
     >
       <LegalSections sections={sections} legal={legal} />

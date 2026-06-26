@@ -357,7 +357,7 @@ function PromosTab({ data, reload }) {
   )
 }
 
-/* =================== COMMANDES (Click & Collect) =================== */
+/* =================== COMMANDES (À EMPORTER) =================== */
 function CommandesTab({ data, reload }) {
   const orders = data.preorders || []
   const statusColor = { new: '#FFD600', confirmed: '#4ade80', cancelled: '#f87171', completed: '#888' }
@@ -645,6 +645,44 @@ function PricesEditor({ prices, setPrices }) {
 // L'upload passe par /api/admin/upload (sharp + Firebase Storage) qui renvoie une URL.
 // `productId` OU `categoryId` : précise à qui appartient l'image (nommage + dossier).
 // `label` : libellé du champ (ex : « Image du produit », « Image de la catégorie »).
+// Normalisation côté client d'une image (HEIC iPhone, JPEG, PNG...) -> Blob WebP
+// via <canvas>, avec correction de l'orientation EXIF et grand côté plafonné à 2000px.
+// Indispensable sur iPhone : les photos sont en HEIC, un format que le serveur ne sait
+// pas lire. Safari iOS / Chrome modernes décodent le HEIC nativement.
+async function normalizeImage(file) {
+  const MAX = 2000
+  let bitmap = null
+  try { bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' }) } catch { bitmap = null }
+  let source, w, h
+  if (bitmap) {
+    source = bitmap; w = bitmap.width; h = bitmap.height
+  } else {
+    const img = document.createElement('img')
+    img.src = URL.createObjectURL(file)
+    await new Promise((resolve, reject) => {
+      img.onload = resolve
+      img.onerror = () => reject(new Error("Image illisible — essayez un JPG ou un PNG."))
+    })
+    source = img; w = img.naturalWidth; h = img.naturalHeight
+  }
+  if (w > MAX || h > MAX) {
+    const r = Math.min(MAX / w, MAX / h)
+    w = Math.round(w * r); h = Math.round(h * r)
+  }
+  const canvas = document.createElement('canvas')
+  canvas.width = w; canvas.height = h
+  canvas.getContext('2d').drawImage(source, 0, 0, w, h)
+  let blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.92))
+  let ext = 'webp', type = 'image/webp'
+  if (!blob) { // Très vieux navigateur sans export WebP -> JPEG.
+    blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92))
+    ext = 'jpg'; type = 'image/jpeg'
+  }
+  if (bitmap && bitmap.close) bitmap.close()
+  if (!blob) throw new Error("Conversion impossible — essayez un JPG ou un PNG.")
+  return new File([blob], `photo.${ext}`, { type })
+}
+
 function ImageField({ value, onChange, productId, categoryId, label = 'Image du produit' }) {
   const [err, setErr] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -654,16 +692,18 @@ function ImageField({ value, onChange, productId, categoryId, label = 'Image du 
   async function uploadFile(file) {
     setUploadErr('')
     if (!file) return
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-      setUploadErr('Format non supporté : PNG, JPG ou WebP uniquement.'); return
-    }
-    if (file.size > 12 * 1024 * 1024) {
-      setUploadErr('Fichier trop volumineux (max 12 Mo).'); return
-    }
     setUploading(true)
     try {
+      let toSend = file
+      const STANDARD = ['image/png', 'image/jpeg', 'image/webp']
+      // HEIC/HEIF (photos iPhone) ou fichier trop lourd : on normalise côté client
+      // (conversion WebP + orientation + redimensionnement), sinon l'upload échoue
+      // (le serveur ne lit pas le HEIC et bloque les fichiers de plus de 12 Mo).
+      if (!STANDARD.includes(file.type) || file.size > 12 * 1024 * 1024) {
+        toSend = await normalizeImage(file)
+      }
       const fd = new FormData()
-      fd.append('file', file)
+      fd.append('file', toSend)
       fd.append('id', categoryId || productId || '')
       fd.append('kind', categoryId ? 'category' : 'product')
       const r = await fetch('/api/admin/upload', { method: 'POST', body: fd, credentials: 'same-origin' })
@@ -671,7 +711,7 @@ function ImageField({ value, onChange, productId, categoryId, label = 'Image du 
       if (!r.ok) throw new Error(data.error || "Échec de l'upload")
       onChange(data.url)
     } catch (e) {
-      setUploadErr(e.message)
+      setUploadErr(e.message || 'Upload impossible. Essayez une autre photo (JPG/PNG).')
     } finally {
       setUploading(false)
     }
@@ -684,7 +724,7 @@ function ImageField({ value, onChange, productId, categoryId, label = 'Image du 
       <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
         <label className="btn-outline" style={{ fontSize: '0.7rem', padding: '8px 14px', cursor: 'pointer' }}>
           📁 Choisir une image
-          <input type="file" accept="image/png,image/jpeg,image/webp" style={{ display: 'none' }} onChange={(e) => uploadFile(e.target.files && e.target.files[0])} />
+          <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => uploadFile(e.target.files && e.target.files[0])} />
         </label>
         <label className="btn-outline" style={{ fontSize: '0.7rem', padding: '8px 14px', cursor: 'pointer' }}>
           📸 Prendre une photo

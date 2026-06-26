@@ -64,7 +64,7 @@ export default function ProductModal({ product, onClose }) {
             </div>
 
             <p style={{ marginTop: 'auto', color: '#666', fontSize: '0.72rem', lineHeight: 1.6, paddingTop: 16, borderTop: '1px solid #1c1c1c' }}>
-              Commande centralisée via le bouton <strong style={{ color: '#FFD600' }}>Commander</strong> en haut de page (livraison Deliveroo ou Click &amp; Collect).
+              Commande centralisée via le bouton <strong style={{ color: '#FFD600' }}>Commander</strong> en haut de page (livraison Deliveroo ou à emporter).
             </p>
           </div>
         </div>

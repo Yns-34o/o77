@@ -29,7 +29,7 @@ service cloud.firestore {
       allow write: if isSignedIn();
     }
 
-    // Pré-commandes Click & Collect : tout le monde peut créer, seul l'admin gère.
+    // Pré-commandes à emporter : tout le monde peut créer, seul l'admin gère.
     match /preorders/{id} {
       allow create: if true;
       allow read, update, delete: if isSignedIn();

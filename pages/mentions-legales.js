@@ -37,7 +37,7 @@ export default function MentionsLegales({ legal, missing }) {
 
       <h2>Données personnelles</h2>
       <p>
-        Les informations recueillies via les formulaires (pré-commande Click &amp; Collect, contact) font l'objet d'un traitement déclaré à la CNIL, conformément au Règlement Général sur la Protection des Données (RGPD). Pour plus d'informations, consulter notre <a href="/politique-confidentialite">Politique de confidentialité</a>.
+        Les informations recueillies via les formulaires (pré-commande à emporter, contact) font l'objet d'un traitement déclaré à la CNIL, conformément au Règlement Général sur la Protection des Données (RGPD). Pour plus d'informations, consulter notre <a href="/politique-confidentialite">Politique de confidentialité</a>.
       </p>
       <p>
         Conformément à la loi « Informatique et Libertés » du 6 janvier 1978 modifiée et au RGPD, vous disposez d'un droit d'accès, de rectification, d'effacement et d'opposition aux données vous concernant. Pour l'exercer : <a href={`mailto:${legal.email}`}>{legal.email}</a>.

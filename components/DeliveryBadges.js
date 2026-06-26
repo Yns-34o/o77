@@ -42,7 +42,7 @@ export default function DeliveryBadges({ config }) {
             </>
           )}
         </div>
-        <p style={{ color: '#555', fontSize: '0.7rem', marginTop: 24 }}>Commande aussi sur place ou en Click &amp; Collect.</p>
+        <p style={{ color: '#555', fontSize: '0.7rem', marginTop: 24 }}>Commande aussi sur place ou à emporter.</p>
       </div>
     </Reveal>
   )

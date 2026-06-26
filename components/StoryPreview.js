@@ -6,16 +6,13 @@ export default function StoryPreview() {
     <Reveal style={{ padding: '80px 0', borderTop: '1px solid #1c1c1c' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
         <div className="hist-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
-          <div style={{ position: 'relative' }}>
+          <div>
             <img
-              src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&h=850&fit=crop"
-              alt="Coulisses O'77"
+              src="/photo-resto.jpg"
+              alt="Le restaurant O'77 à Pontault-Combault"
               loading="lazy"
               style={{ width: '100%', height: 420, objectFit: 'cover', display: 'block' }}
             />
-            <div style={{ position: 'absolute', bottom: -12, right: -12, background: '#FFD600', color: '#000', fontFamily: 'Oswald', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '10px 20px' }}>
-              Depuis 2026
-            </div>
           </div>
           <div>
             <span style={{ color: '#FFD600', fontSize: 11, fontFamily: 'Oswald', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>

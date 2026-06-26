@@ -17,7 +17,7 @@ export default function Home({ products, banner, config }) {
     <>
       <Seo
         title="O'77 — Fast-food & Pizzeria à Pontault-Combault (77340)"
-        description="O'77, fast-food & pizzeria à Pontault-Combault. Pizzas fait maison, sandwichs artisanaux, naans dorés. Ouvert 7j/7 jusqu'à 1h. Commandez sur Deliveroo ou en Click & Collect."
+        description="O'77, fast-food & pizzeria à Pontault-Combault. Pizzas fait maison, sandwichs artisanaux, naans dorés. Ouvert 7j/7 jusqu'à 1h. Commandez sur Deliveroo ou à emporter."
         path="/"
       />
 

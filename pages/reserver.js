@@ -48,14 +48,14 @@ export default function Reserver() {
   return (
     <>
       <Seo
-        title="Click & Collect — Pré-commande à emporter | O'77 Pontault-Combault"
-        description="Pré-commande ton repas chez O'77 à Pontault-Combault et retire-le à l'heure choisie (Click & Collect). Fast-food & pizzeria, 7j/7 de 11h à 1h."
+        title="Pré-commande à emporter | O'77 Pontault-Combault"
+        description="Pré-commande ton repas chez O'77 à Pontault-Combault et retire-le à l'heure choisie. Fast-food & pizzeria, 7j/7 de 11h à 1h."
         path="/reserver"
       />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px 80px' }}>
         <Reveal style={{ maxWidth: 700, marginBottom: 64 }}>
-          <span style={{ color: '#FFD600', fontSize: 11, fontFamily: 'Oswald', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: 16 }}>Click &amp; Collect</span>
+          <span style={{ color: '#FFD600', fontSize: 11, fontFamily: 'Oswald', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: 16 }}>À emporter</span>
           <h1 className="hero-big" style={{ fontFamily: 'Oswald', fontSize: '4rem', textTransform: 'uppercase', lineHeight: 0.95, letterSpacing: '-0.02em' }}>
             PRÉ-COMMANDE<br />À <span style={{ color: '#FFD600' }}>EMPORTER</span>
           </h1>
