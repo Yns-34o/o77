@@ -8,7 +8,7 @@ import BestSellers from '@/components/BestSellers'
 import StoryPreview from '@/components/StoryPreview'
 import DeliveryBadges from '@/components/DeliveryBadges'
 import ProductModal from '@/components/ProductModal'
-import { getMenu, getActiveBanner } from '@/lib/site-data'
+import { getMenu } from '@/lib/site-data'
 
 export default function Home({ products, banner, config }) {
   const [selected, setSelected] = useState(null)
@@ -50,7 +50,8 @@ export default function Home({ products, banner, config }) {
 }
 
 export async function getServerSideProps() {
-  const { products, config } = await getMenu()
-  const banner = await getActiveBanner()
-  return { props: { products, banner, config } }
+  // getMenu() applique déjà le deal actif aux produits ET le renvoie dans `deal`
+  // (servira de bannière). Un seul accès Firestore au lieu de deux.
+  const { products, config, deal } = await getMenu()
+  return { props: { products, banner: deal, config } }
 }

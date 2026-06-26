@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { MapPin, Phone, Mail } from 'lucide-react'
 import OpenStatus from './OpenStatus'
+import SocialLinks from './SocialLinks'
 import { useConfig } from '@/context/ConfigContext'
 import { RESTAURANT } from '@/lib/constants'
 
@@ -22,21 +23,12 @@ const LEGAL = [
   ['/politique-cookies', 'Cookies'],
 ]
 
-const SOCIAL_ICONS = {
-  instagram: 'simple-icons:instagram',
-  tiktok: 'simple-icons:tiktok',
-  snapchat: 'simple-icons:snapchat',
-  facebook: 'simple-icons:facebook',
-}
-
 export default function Footer() {
   const cfg = useConfig()
   const phone = cfg?.phone || RESTAURANT.phone
   const email = cfg?.email || RESTAURANT.email
   const slogan = cfg?.slogan || RESTAURANT.slogan
   const addr = cfg?.address || RESTAURANT.address
-  const social = cfg?.social || {}
-  const socials = Object.entries(social).filter(([, v]) => v)
 
   return (
     <footer style={{ borderTop: '2px solid rgba(255,214,0,0.15)', background: '#000' }}>
@@ -50,15 +42,7 @@ export default function Footer() {
             <p style={{ color: '#FFD600', fontFamily: 'Oswald', fontSize: '0.8rem', marginTop: 16, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               « {slogan} »
             </p>
-            {socials.length > 0 && (
-              <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
-                {socials.map(([k, url]) => (
-                  <a key={k} href={url} target="_blank" rel="noopener noreferrer" style={{ width: 36, height: 36, border: '1px solid #1c1c1c', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', textDecoration: 'none', borderRadius: 9 }}>
-                    <iconify-icon icon={SOCIAL_ICONS[k] || 'simple-icons:linktree'} width="14" />
-                  </a>
-                ))}
-              </div>
-            )}
+            <SocialLinks size={36} style={{ marginTop: 20 }} />
           </div>
 
           <div>

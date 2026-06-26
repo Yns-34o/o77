@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { parseCookies, verifySession, COOKIE_NAME } from '@/lib/auth-session'
 import { LEGAL_PAGE_META, LEGAL_PAGES, seedLegalPages } from '@/lib/legal-content'
 import { pricesToLabel, pricesToBase, priceDisplay } from '@/lib/format'
+import { auth } from '@/lib/firebase'
 
 // Helper de fetch avec cookie de session.
 function adminFetch(path, body) {
@@ -21,7 +23,65 @@ const TABS = [
 const inputStyle = { marginBottom: 12 }
 const lbl = { fontSize: 10, fontFamily: 'Oswald', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#999', display: 'block', marginBottom: 6 }
 
-export default function Dashboard({ adminEmail }) {
+// Formulaire de connexion affiché DIRECTEMENT dans /dashboard quand l'admin
+// n'est pas authentifié. Valide les identifiants : accepte l'entrée si corrects,
+// la refuse sinon. Après connexion, on recharge -> le cookie posé rend le dashboard.
+function LoginForm() {
+  const [email, setEmail] = useState('')
+  const [pwd, setPwd] = useState('')
+  const [err, setErr] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function submit(e) {
+    e.preventDefault()
+    setErr(''); setLoading(true)
+    try {
+      // 1. Connexion côté client -> idToken (Firebase Auth)
+      const cred = await signInWithEmailAndPassword(auth, email, pwd)
+      const idToken = await cred.user.getIdToken()
+      // 2. Échange contre un cookie de session HttpOnly (fait foi côté serveur)
+      const res = await fetch('/api/auth/session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ idToken }) })
+      if (!res.ok) throw new Error()
+      await auth.signOut()
+      window.location.reload() // cookie posé -> getServerSideProps rend le dashboard
+    } catch {
+      setErr('Email ou mot de passe incorrect.')
+      setLoading(false)
+    }
+  }
+
+  return (
+    <>
+      <Head><title>Connexion admin — O'77</title><meta name="robots" content="noindex" /></Head>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: '#000' }}>
+        <div style={{ width: '100%', maxWidth: 380, background: '#0a0a0a', border: '1px solid #1c1c1c', borderTop: '2px solid #FFD600', padding: 40 }}>
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <img src="/logo.png" alt="O'77" style={{ height: 56, marginBottom: 16, display: 'inline-block' }} />
+            <h1 style={{ fontFamily: 'Oswald', fontSize: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Espace admin</h1>
+            <p style={{ color: '#666', fontSize: '0.8rem', marginTop: 8 }}>Connectez-vous pour gérer le site</p>
+          </div>
+          <form onSubmit={submit}>
+            <label style={lbl}>Email</label>
+            <input type="email" className="form-input" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="username" style={{ marginBottom: 16 }} />
+            <label style={lbl}>Mot de passe</label>
+            <input type="password" className="form-input" value={pwd} onChange={(e) => setPwd(e.target.value)} required autoComplete="current-password" />
+            {err && <p style={{ color: '#f87171', fontSize: '0.8rem', margin: '12px 0' }}>{err}</p>}
+            <button type="submit" className="btn-jaune" disabled={loading} style={{ width: '100%', marginTop: 20, opacity: loading ? 0.6 : 1 }}>
+              {loading ? 'Connexion…' : 'Se connecter'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </>
+  )
+}
+
+// Point d'entrée : authentifié -> dashboard complet ; sinon -> formulaire de connexion.
+export default function Dashboard({ authed, adminEmail }) {
+  return authed ? <DashboardApp adminEmail={adminEmail} /> : <LoginForm />
+}
+
+function DashboardApp({ adminEmail }) {
   const [tab, setTab] = useState('produits')
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -38,14 +98,14 @@ export default function Dashboard({ adminEmail }) {
 
   async function logout() {
     await fetch('/api/auth/session', { method: 'DELETE' })
-    window.location.href = '/login-admin'
+    window.location.href = '/dashboard'
   }
 
   if (loading) {
     return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>Chargement…</div>
   }
   if (!data || data.error) {
-    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f87171' }}>Session expirée — <a href="/login-admin" style={{ color: '#FFD600', marginLeft: 8 }}>reconnexion</a></div>
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f87171' }}>Session expirée — <a href="/dashboard" style={{ color: '#FFD600', marginLeft: 8 }}>reconnexion</a></div>
   }
 
   return (
@@ -136,28 +196,54 @@ function ProduitsTab({ data, reload }) {
     await reload()
   }
 
+  // Produits groupés par catégorie : toute catégorie ajoutée apparaît ici
+  // automatiquement comme une section. Les produits sans catégorie valide
+  // tombent dans « Hors catégorie » (pour vérifier qu'aucun n'est perdu).
+  const products = data.products || []
+  const catsSorted = cats.slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+  const orphans = products.filter((p) => !cats.find((c) => c.id === p.category))
+
+  // Rendu d'une ligne produit (réutilisé dans chaque section).
+  const row = (p) => (
+    <div key={p.id} style={{ background: '#111', border: '1px solid #1c1c1c', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+      <div>
+        <strong style={{ fontSize: '0.9rem' }}>{p.name}</strong>
+        {!p.active && <span style={{ color: '#f87171', fontSize: '0.7rem', marginLeft: 8 }}>(masqué)</span>}
+        {p.featured && <span style={{ color: '#FFD600', fontSize: '0.7rem', marginLeft: 8 }}>★ Mis en avant</span>}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontFamily: 'Oswald', color: '#FFD600', fontSize: '0.8rem' }}>
+          {p.saleActive && p.salePrice != null && !p.priceLabel ? <><s style={{ color: '#555', fontSize: '0.75rem' }}>{Number(p.price).toFixed(2)}€</s> {Number(p.salePrice).toFixed(2)}€</> : priceDisplay(p)}
+        </span>
+        <button onClick={() => setEditing({ ...p, prices: toEditingPrices(p), salePrice: p.salePrice != null ? String(p.salePrice) : '', allergens: (p.allergens || []).join(', ') })} style={miniBtn}>Éditer</button>
+        <button onClick={() => remove(p.id)} style={{ ...miniBtn, color: '#f87171' }}>Suppr.</button>
+      </div>
+    </div>
+  )
+
   return (
     <div>
-      <SectionTitle title="Produits" action={<button onClick={startNew} className="btn-jaune" style={{ fontSize: '0.75rem', padding: '10px 18px' }}>+ Nouveau produit</button>} />
-      <div style={{ display: 'grid', gap: 8 }}>
-        {(data.products || []).map((p) => (
-          <div key={p.id} style={{ background: '#111', border: '1px solid #1c1c1c', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <div>
-              <strong style={{ fontSize: '0.9rem' }}>{p.name}</strong>
-              <span style={{ color: '#666', fontSize: '0.75rem', marginLeft: 8 }}>{(cats.find((c) => c.id === p.category) || {}).label || p.category}</span>
-              {!p.active && <span style={{ color: '#f87171', fontSize: '0.7rem', marginLeft: 8 }}>(masqué)</span>}
-              {p.featured && <span style={{ color: '#FFD600', fontSize: '0.7rem', marginLeft: 8 }}>★ Mis en avant</span>}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontFamily: 'Oswald', color: '#FFD600', fontSize: '0.8rem' }}>
-                {p.saleActive && p.salePrice != null && !p.priceLabel ? <><s style={{ color: '#555', fontSize: '0.75rem' }}>{Number(p.price).toFixed(2)}€</s> {Number(p.salePrice).toFixed(2)}€</> : priceDisplay(p)}
-              </span>
-              <button onClick={() => setEditing({ ...p, prices: toEditingPrices(p), salePrice: p.salePrice != null ? String(p.salePrice) : '', allergens: (p.allergens || []).join(', ') })} style={miniBtn}>Éditer</button>
-              <button onClick={() => remove(p.id)} style={{ ...miniBtn, color: '#f87171' }}>Suppr.</button>
-            </div>
+      <SectionTitle title={`Produits (${products.length})`} action={<button onClick={startNew} className="btn-jaune" style={{ fontSize: '0.75rem', padding: '10px 18px' }}>+ Nouveau produit</button>} />
+      {catsSorted.map((c) => {
+        const items = products.filter((p) => p.category === c.id)
+        if (!items.length) return null
+        return (
+          <div key={c.id} style={{ marginBottom: 22 }}>
+            <h3 style={{ fontFamily: 'Oswald', textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '0.95rem', color: '#fff', margin: '8px 0 10px' }}>
+              {c.icon || '🍽️'} {c.label} <span style={{ color: '#666', fontSize: '0.75rem', letterSpacing: 0 }}>({items.length})</span>
+            </h3>
+            <div style={{ display: 'grid', gap: 8 }}>{items.map(row)}</div>
           </div>
-        ))}
-      </div>
+        )
+      })}
+      {orphans.length > 0 && (
+        <div style={{ marginBottom: 22 }}>
+          <h3 style={{ fontFamily: 'Oswald', textTransform: 'uppercase', letterSpacing: '0.04em', fontSize: '0.95rem', color: '#f87171', margin: '8px 0 10px' }}>
+            Hors catégorie <span style={{ color: '#666', fontSize: '0.75rem', letterSpacing: 0 }}>({orphans.length})</span>
+          </h3>
+          <div style={{ display: 'grid', gap: 8 }}>{orphans.map(row)}</div>
+        </div>
+      )}
 
       {editing && (
         <Modal onClose={() => setEditing(null)} title={editing.id ? 'Modifier le produit' : 'Nouveau produit'}>
@@ -197,16 +283,35 @@ const DAY_LABELS = [
 function PromosTab({ data, reload }) {
   const promos = data.promos || []
   const cats = data.categories || []
-  const deal = promos.find((p) => p.type === 'deal') || { id: '', type: 'deal', text: '', active: false, percent: '', cats: [], days: [] }
-  const [d, setD] = useState(() => ({ ...deal, percent: deal.percent != null ? String(deal.percent) : '', cats: deal.cats || [], days: deal.days || [] }))
-  const [saved, setSaved] = useState(false)
+  // La promo « deal » actuellement enregistrée en base (null si aucune).
+  const stored = promos.find((p) => p.type === 'deal') || null
+  const toForm = (p) => ({ id: p.id || '', type: 'deal', text: p.text || '', active: !!p.active, percent: p.percent != null ? String(p.percent) : '', cats: p.cats || [], days: p.days || [] })
+  const EMPTY = { id: '', type: 'deal', text: '', active: false, percent: '', cats: [], days: [] }
+
+  const [d, setD] = useState(() => (stored ? toForm(stored) : { ...EMPTY }))
+  const [justSaved, setJustSaved] = useState(false)
+
+  // Resynchronise le formulaire avec la base : après un enregistrement (l'id vient
+  // d'être créé) ou au retour sur l'onglet. Sans ça, chaque « Enregistrer » créait
+  // un nouveau document au lieu de modifier l'existant.
+  useEffect(() => {
+    setD(stored ? toForm(stored) : { ...EMPTY })
+  }, [stored?.id, stored?.updatedAt])
+
   const set = (k, v) => setD((p) => ({ ...p, [k]: v }))
   const toggleCat = (cid) => set('cats', d.cats.includes(cid) ? d.cats.filter((x) => x !== cid) : [...d.cats, cid])
   const toggleDay = (day) => set('days', d.days.includes(day) ? d.days.filter((x) => x !== day) : [...d.days, day])
 
   async function save() {
     await fetch('/api/admin/promos', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.id || undefined, type: 'deal', text: d.text, active: !!d.active, percent: parseFloat(d.percent) || 0, cats: d.cats, days: d.days }) })
-    setSaved(true); setTimeout(() => setSaved(false), 2000)
+    setJustSaved(true); setTimeout(() => setJustSaved(false), 2000)
+    await reload()
+  }
+
+  async function remove() {
+    if (!d.id || !confirm('Supprimer définitivement cette promo ? Les prix redeviennent normaux.')) return
+    await fetch('/api/admin/promos', { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.id }) })
+    setD({ ...EMPTY })
     await reload()
   }
 
@@ -216,6 +321,13 @@ function PromosTab({ data, reload }) {
       <p style={{ color: '#888', fontSize: '0.8rem', marginBottom: 20 }}>
         Configurez une réduction : elle s'affiche en <strong>bannière en haut du site</strong> ET <strong>réduit les prix</strong> des catégories ciblées les jours choisis (prix barrés sur la carte).
       </p>
+
+      {d.id && (
+        <div style={{ background: '#1c1a00', border: '1px solid #3a3500', color: '#FFD600', padding: '10px 14px', marginBottom: 16, fontSize: '0.8rem', borderRadius: 6 }}>
+          ✓ Promo enregistrée en mémoire — modifiable ci-dessous, ou supprimable.
+        </div>
+      )}
+
       <Field label="Texte de la bannière"><input className="form-input" value={d.text} onChange={(e) => set('text', e.target.value)} placeholder="ex : -20% sur les pizzas tous les vendredis !" style={{ marginBottom: 16 }} /></Field>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 8 }}>
         <Field label="Réduction (%)"><input className="form-input" type="number" min="0" max="100" step="1" value={d.percent} onChange={(e) => set('percent', e.target.value)} /></Field>
@@ -234,7 +346,10 @@ function PromosTab({ data, reload }) {
         </div>
       </Field>
 
-      <button onClick={save} className="btn-jaune" style={{ marginTop: 12 }}>{saved ? '✓ Enregistré' : 'Enregistrer la promo'}</button>
+      <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+        <button onClick={save} className="btn-jaune">{justSaved ? '✓ Enregistré' : (d.id ? 'Mettre à jour' : 'Enregistrer la promo')}</button>
+        {d.id && <button onClick={remove} className="btn-outline" style={{ color: '#f87171', borderColor: '#f87171' }}>Supprimer</button>}
+      </div>
 
       <SectionTitle title="Promo par produit (prix barré)" />
       <p style={{ color: '#888', fontSize: '0.8rem' }}>Pour une promo ciblée sur un seul produit : onglet <strong>Produits</strong> → éditer → « Prix soldé » + cocher « En soldes ».</p>
@@ -280,35 +395,71 @@ function CommandesTab({ data, reload }) {
 
 /* =================== CATÉGORIES =================== */
 function CategoriesTab({ data, reload }) {
-  const [label, setLabel] = useState('')
-  const [icon, setIcon] = useState('')
-  const cats = data.categories || []
-  async function add() {
-    if (!label.trim()) return
-    await fetch('/api/admin/categories', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ label, icon: icon || '🍽️', sortOrder: cats.length, active: true }) })
-    setLabel(''); setIcon(''); await reload()
+  const [editing, setEditing] = useState(null) // catégorie en édition (ou {} pour nouvelle)
+  const cats = (data.categories || []).slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+
+  function startNew() {
+    setEditing({ id: '', label: '', icon: '🍽️', image: '', sortOrder: cats.length, active: true })
   }
+
+  async function save() {
+    if (!String(editing.label || '').trim()) return
+    await fetch('/api/admin/categories', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({
+      id: editing.id || undefined,
+      label: editing.label.trim(),
+      icon: editing.icon || '🍽️',
+      image: editing.image || null,
+      sortOrder: parseInt(editing.sortOrder, 10) || 0,
+      active: editing.active !== false,
+    }) })
+    setEditing(null)
+    await reload()
+  }
+
   async function remove(id) {
-    if (!confirm('Supprimer cette catégorie ?')) return
+    if (!confirm('Supprimer cette catégorie ? (Les produits associés ne sont pas supprimés, mais n\'auront plus de catégorie.)')) return
     await fetch('/api/admin/categories', { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id }) })
     await reload()
   }
+
   return (
     <div>
-      <SectionTitle title="Catégories du menu" />
-      <div style={{ display: 'grid', gap: 8, marginBottom: 24 }}>
+      <SectionTitle title="Catégories du menu" action={<button onClick={startNew} className="btn-jaune" style={{ fontSize: '0.75rem', padding: '10px 18px' }}>+ Nouvelle catégorie</button>} />
+      <div style={{ display: 'grid', gap: 8 }}>
         {cats.map((c) => (
-          <div key={c.id} style={{ background: '#111', border: '1px solid #1c1c1c', padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>{c.icon} {c.label}</span>
-            <button onClick={() => remove(c.id)} style={{ ...miniBtn, color: '#f87171' }}>Suppr.</button>
+          <div key={c.id} style={{ background: '#111', border: '1px solid #1c1c1c', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              {c.image
+                ? <img src={c.image} alt="" style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 6, border: '1px solid #1c1c1c' }} />
+                : <span style={{ width: 44, height: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', borderRadius: 6, fontSize: 22 }}>{c.icon || '🍽️'}</span>}
+              <div>
+                <strong style={{ fontSize: '0.9rem' }}>{c.label}</strong>
+                {!c.active && <span style={{ color: '#f87171', fontSize: '0.7rem', marginLeft: 8 }}>(masquée)</span>}
+                <span style={{ color: '#666', fontSize: '0.72rem', display: 'block' }}>{c.id}</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => setEditing({ ...c })} style={miniBtn}>Éditer</button>
+              <button onClick={() => remove(c.id)} style={{ ...miniBtn, color: '#f87171' }}>Suppr.</button>
+            </div>
           </div>
         ))}
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr auto', gap: 8 }}>
-        <input className="form-input" value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="🍕" />
-        <input className="form-input" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Nom de la catégorie" />
-        <button onClick={add} className="btn-jaune">+ Ajouter</button>
-      </div>
+
+      {editing && (
+        <Modal onClose={() => setEditing(null)} title={editing.id ? 'Modifier la catégorie' : 'Nouvelle catégorie'}>
+          <Field label="Nom"><input className="form-input" value={editing.label} onChange={(e) => setEditing({ ...editing, label: e.target.value })} style={inputStyle} /></Field>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <Field label="Icône (emoji)"><input className="form-input" value={editing.icon || ''} onChange={(e) => setEditing({ ...editing, icon: e.target.value })} placeholder="🍕" /></Field>
+            <Field label="Ordre (tri)"><input className="form-input" type="number" value={editing.sortOrder ?? 0} onChange={(e) => setEditing({ ...editing, sortOrder: e.target.value })} /></Field>
+          </div>
+          <ImageField label="Image de la catégorie" value={editing.image} onChange={(v) => setEditing({ ...editing, image: v })} categoryId={editing.id} />
+          <div style={{ margin: '12px 0 20px' }}>
+            <Check label="Visible sur le site" checked={editing.active !== false} onChange={(v) => setEditing({ ...editing, active: v })} />
+          </div>
+          <button onClick={save} className="btn-jaune" style={{ width: '100%' }}>Enregistrer</button>
+        </Modal>
+      )}
     </div>
   )
 }
@@ -347,6 +498,8 @@ function InfosTab({ data, reload }) {
         <Field label="Lien Just Eat (si dispo)"><input className="form-input" value={(cfg.delivery && cfg.delivery.justeat) || ''} onChange={(e) => setDeep('delivery', 'justeat', e.target.value)} /></Field>
         <Field label="Instagram (URL)"><input className="form-input" value={(cfg.social && cfg.social.instagram) || ''} onChange={(e) => setDeep('social', 'instagram', e.target.value)} /></Field>
         <Field label="TikTok (URL)"><input className="form-input" value={(cfg.social && cfg.social.tiktok) || ''} onChange={(e) => setDeep('social', 'tiktok', e.target.value)} /></Field>
+        <Field label="Snapchat (URL)"><input className="form-input" value={(cfg.social && cfg.social.snapchat) || ''} onChange={(e) => setDeep('social', 'snapchat', e.target.value)} /></Field>
+        <Field label="Facebook (URL)"><input className="form-input" value={(cfg.social && cfg.social.facebook) || ''} onChange={(e) => setDeep('social', 'facebook', e.target.value)} /></Field>
       </div>
 
       <SectionTitle title="Mentions légales (à compléter)" />
@@ -490,7 +643,9 @@ function PricesEditor({ prices, setPrices }) {
 // modification de l'URL, et signale une image introuvable (onError).
 // Champ image : upload (PNG/JPG/WebP), photo en direct (caméra mobile) OU URL.
 // L'upload passe par /api/admin/upload (sharp + Firebase Storage) qui renvoie une URL.
-function ImageField({ value, onChange, productId }) {
+// `productId` OU `categoryId` : précise à qui appartient l'image (nommage + dossier).
+// `label` : libellé du champ (ex : « Image du produit », « Image de la catégorie »).
+function ImageField({ value, onChange, productId, categoryId, label = 'Image du produit' }) {
   const [err, setErr] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadErr, setUploadErr] = useState('')
@@ -502,14 +657,15 @@ function ImageField({ value, onChange, productId }) {
     if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
       setUploadErr('Format non supporté : PNG, JPG ou WebP uniquement.'); return
     }
-    if (file.size > 8 * 1024 * 1024) {
-      setUploadErr('Fichier trop volumineux (max 8 Mo).'); return
+    if (file.size > 12 * 1024 * 1024) {
+      setUploadErr('Fichier trop volumineux (max 12 Mo).'); return
     }
     setUploading(true)
     try {
       const fd = new FormData()
       fd.append('file', file)
-      fd.append('productId', productId || '')
+      fd.append('id', categoryId || productId || '')
+      fd.append('kind', categoryId ? 'category' : 'product')
       const r = await fetch('/api/admin/upload', { method: 'POST', body: fd, credentials: 'same-origin' })
       const data = await r.json().catch(() => ({}))
       if (!r.ok) throw new Error(data.error || "Échec de l'upload")
@@ -524,7 +680,7 @@ function ImageField({ value, onChange, productId }) {
   const url = (value || '').trim()
   return (
     <div style={{ marginBottom: 12 }}>
-      <label style={lbl}>Image du produit</label>
+      <label style={lbl}>{label}</label>
       <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
         <label className="btn-outline" style={{ fontSize: '0.7rem', padding: '8px 14px', cursor: 'pointer' }}>
           📁 Choisir une image
@@ -535,7 +691,7 @@ function ImageField({ value, onChange, productId }) {
           <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={(e) => uploadFile(e.target.files && e.target.files[0])} />
         </label>
       </div>
-      {uploading && <p style={{ color: '#FFD600', fontSize: '0.72rem', marginBottom: 8 }}>Upload en cours…</p>}
+      {uploading && <p style={{ color: '#FFD600', fontSize: '0.72rem', marginBottom: 8 }}>Upload en cours… (optimisation qualité)</p>}
       {uploadErr && <p style={{ color: '#f87171', fontSize: '0.72rem', marginBottom: 8 }}>⚠ {uploadErr}</p>}
       <input className="form-input" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder="…ou collez une URL https://…" style={inputStyle} />
       <div style={{ marginTop: 8, height: 150, width: '100%', background: '#0a0a0a', border: '1px solid #1c1c1c', borderRadius: 4, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -575,6 +731,8 @@ function Modal({ title, children, onClose }) {
 export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req)
   const decoded = await verifySession(cookies[COOKIE_NAME])
-  if (!decoded) return { redirect: { destination: '/login-admin', permanent: false } }
-  return { props: { adminEmail: decoded.email || '' } }
+  // Pas de session valide -> on reste sur /dashboard mais on y affiche le
+  // formulaire de connexion intégré (authed=false) plutôt que de rediriger.
+  if (!decoded) return { props: { authed: false } }
+  return { props: { authed: true, adminEmail: decoded.email || '' } }
 }

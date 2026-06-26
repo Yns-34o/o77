@@ -1,5 +1,6 @@
 import { Phone } from 'lucide-react'
 import Seo from '@/components/Seo'
+import SocialLinks from '@/components/SocialLinks'
 import Reveal from '@/components/Reveal'
 import OpenStatus from '@/components/OpenStatus'
 import { RESTAURANT } from '@/lib/constants'
@@ -62,6 +63,12 @@ export default function Contact() {
             <div>
               <h3 style={{ fontFamily: 'Oswald', fontSize: '1.2rem', color: '#FFD600', textTransform: 'uppercase', marginBottom: 16 }}>Email</h3>
               <a href={`mailto:${RESTAURANT.email}`} style={{ color: '#888', fontSize: '0.9rem', textDecoration: 'none' }}>{RESTAURANT.email}</a>
+            </div>
+
+            <div>
+              <h3 style={{ fontFamily: 'Oswald', fontSize: '1.2rem', color: '#FFD600', textTransform: 'uppercase', marginBottom: 16 }}>Réseaux sociaux</h3>
+              <SocialLinks size={48} style={{ gap: 12 }} />
+              <p style={{ color: '#555', fontSize: '0.72rem', marginTop: 10 }}>Renseignez vos comptes dans le dashboard (Infos &amp; Légal) pour les afficher ici.</p>
             </div>
           </div>
         </Reveal>
