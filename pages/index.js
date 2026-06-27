@@ -49,9 +49,11 @@ export default function Home({ products, banner, config }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   // getMenu() applique déjà le deal actif aux produits ET le renvoie dans `deal`
   // (servira de bannière). Un seul accès Firestore au lieu de deux.
   const { products, config, deal } = await getMenu()
-  return { props: { products, banner: deal, config } }
+  // ISR : page régénérée au max toutes les 10 min, et à la demande (cf. lib/revalidate.js)
+  // après chaque modif dans le dashboard -> lecture Firestore au moment de la revalidation seulement.
+  return { props: { products, banner: deal, config }, revalidate: 600 }
 }

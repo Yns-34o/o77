@@ -63,7 +63,8 @@ export default function Cgu({ legal }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const config = await getSiteConfig()
-  return { props: { legal: resolveLegal(config) } }
+  // ISR : régénération au max toutes les heures + à la demande (config).
+  return { props: { legal: resolveLegal(config) }, revalidate: 3600 }
 }

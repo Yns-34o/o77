@@ -17,12 +17,14 @@ export default function Cgv({ legal, sections }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const config = await getSiteConfig()
+  // ISR : régénération au max toutes les heures + à la demande (config).
   return {
     props: {
       legal: resolveLegal(config),
       sections: resolveLegalSections(config, 'cgv'),
     },
+    revalidate: 3600,
   }
 }

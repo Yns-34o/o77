@@ -54,7 +54,8 @@ export default function Carte({ products, categories }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { products, categories } = await getMenu()
-  return { props: { products, categories } }
+  // ISR : régénération au max toutes les 10 min + à la demande après modif dashboard.
+  return { props: { products, categories }, revalidate: 600 }
 }

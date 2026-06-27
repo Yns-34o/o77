@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Head from 'next/head'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { parseCookies, verifySession, COOKIE_NAME } from '@/lib/auth-session'
@@ -298,10 +298,11 @@ const DAY_LABELS = [
 function PromosTab({ data, reload }) {
   const promos = data.promos || []
   const cats = data.categories || []
+  const products = data.products || []
   // La promo « deal » actuellement enregistrée en base (null si aucune).
   const stored = promos.find((p) => p.type === 'deal') || null
-  const toForm = (p) => ({ id: p.id || '', type: 'deal', text: p.text || '', active: !!p.active, percent: p.percent != null ? String(p.percent) : '', cats: p.cats || [], days: p.days || [] })
-  const EMPTY = { id: '', type: 'deal', text: '', active: false, percent: '', cats: [], days: [] }
+  const toForm = (p) => ({ id: p.id || '', type: 'deal', text: p.text || '', active: !!p.active, percent: p.percent != null ? String(p.percent) : '', cats: p.cats || [], days: p.days || [], sizes: p.sizes || [] })
+  const EMPTY = { id: '', type: 'deal', text: '', active: false, percent: '', cats: [], days: [], sizes: [] }
 
   const [d, setD] = useState(() => (stored ? toForm(stored) : { ...EMPTY }))
   const [justSaved, setJustSaved] = useState(false)
@@ -313,12 +314,29 @@ function PromosTab({ data, reload }) {
     setD(stored ? toForm(stored) : { ...EMPTY })
   }, [stored?.id, stored?.updatedAt])
 
+  // Tailles disponibles dans les catégories sélectionnées (pour le ciblage par taille).
+  // Vide = on prend tous les produits ; sinon on filtre sur les catégories cochées.
+  const availableSizes = useMemo(() => {
+    const set = new Set()
+    products.forEach((p) => {
+      if (d.cats.length && !d.cats.includes(p.category)) return
+      if (Array.isArray(p.prices)) p.prices.forEach((l) => { if (l && l.label) set.add(l.label) })
+    })
+    return Array.from(set).sort()
+  }, [products, d.cats])
+
   const set = (k, v) => setD((p) => ({ ...p, [k]: v }))
-  const toggleCat = (cid) => set('cats', d.cats.includes(cid) ? d.cats.filter((x) => x !== cid) : [...d.cats, cid])
+  const toggleCat = (cid) => {
+    const nextCats = d.cats.includes(cid) ? d.cats.filter((x) => x !== cid) : [...d.cats, cid]
+    // Nettoie les tailles devenues indisponibles quand on change de catégories.
+    const valid = new Set(products.filter((p) => !nextCats.length || nextCats.includes(p.category)).flatMap((p) => (Array.isArray(p.prices) ? p.prices : []).map((l) => l && l.label).filter(Boolean)))
+    setD((prev) => ({ ...prev, cats: nextCats, sizes: prev.sizes.filter((s) => valid.has(s)) }))
+  }
   const toggleDay = (day) => set('days', d.days.includes(day) ? d.days.filter((x) => x !== day) : [...d.days, day])
+  const toggleSize = (s) => set('sizes', d.sizes.includes(s) ? d.sizes.filter((x) => x !== s) : [...d.sizes, s])
 
   async function save() {
-    await fetch('/api/admin/promos', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.id || undefined, type: 'deal', text: d.text, active: !!d.active, percent: parseFloat(d.percent) || 0, cats: d.cats, days: d.days }) })
+    await fetch('/api/admin/promos', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.id || undefined, type: 'deal', text: d.text, active: !!d.active, percent: parseFloat(d.percent) || 0, cats: d.cats, days: d.days, sizes: d.sizes }) })
     setJustSaved(true); setTimeout(() => setJustSaved(false), 2000)
     await reload()
   }
@@ -354,6 +372,15 @@ function PromosTab({ data, reload }) {
           {cats.map((c) => <Check key={c.id} label={`${c.icon || '🍽️'} ${c.label}`} checked={d.cats.includes(c.id)} onChange={() => toggleCat(c.id)} />)}
         </div>
       </Field>
+
+      {availableSizes.length > 0 && (
+        <Field label="Tailles concernées (vide = toutes les tailles)">
+          <p style={{ color: '#666', fontSize: '0.72rem', margin: '0 0 8px' }}>Limitez la réduction à des tailles précises (ex : S, M). Sinon, toutes les tailles des catégories cochées sont soldées.</p>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {availableSizes.map((s) => <Check key={s} label={s} checked={d.sizes.includes(s)} onChange={() => toggleSize(s)} />)}
+          </div>
+        </Field>
+      )}
 
       <Field label="Jours actifs (vide = tous les jours)">
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -676,42 +703,30 @@ function PricesEditor({ prices, setPrices }) {
 // L'upload passe par /api/admin/upload (sharp + Firebase Storage) qui renvoie une URL.
 // `productId` OU `categoryId` : précise à qui appartient l'image (nommage + dossier).
 // `label` : libellé du champ (ex : « Image du produit », « Image de la catégorie »).
-// Normalisation côté client d'une image (HEIC iPhone, JPEG, PNG...) -> Blob WebP
-// via <canvas>, avec correction de l'orientation EXIF et grand côté plafonné à 2000px.
-// Indispensable sur iPhone : les photos sont en HEIC, un format que le serveur ne sait
-// pas lire. Safari iOS / Chrome modernes décodent le HEIC nativement.
+// Compression côté client d'une image (HEIC iPhone, JPEG, PNG...) -> WebP léger,
+// via browser-image-compression (décodage HEIC + orientation EXIF gérés en interne).
+// Objectif : ~150 Ko max, grand côté 1200px — suffisant pour un menu web et très
+// économe en stockage/téléchargements. Import dynamique : aucun code navigateur
+// exécuté au rendu SSR du dashboard.
 async function normalizeImage(file) {
-  const MAX = 2000
-  let bitmap = null
-  try { bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' }) } catch { bitmap = null }
-  let source, w, h
-  if (bitmap) {
-    source = bitmap; w = bitmap.width; h = bitmap.height
-  } else {
-    const img = document.createElement('img')
-    img.src = URL.createObjectURL(file)
-    await new Promise((resolve, reject) => {
-      img.onload = resolve
-      img.onerror = () => reject(new Error("Image illisible — essayez un JPG ou un PNG."))
-    })
-    source = img; w = img.naturalWidth; h = img.naturalHeight
+  const { default: imageCompression } = await import('browser-image-compression')
+  const opts = {
+    maxSizeMB: 0.15,            // plafond ~150 Ko
+    maxWidthOrHeight: 1200,     // grand côté max 1200px
+    initialQuality: 0.8,        // qualité 80 %
+    useWebWorker: true,         // ne fige pas l'UI
+    fileType: 'image/webp',     // format moderne, léger
   }
-  if (w > MAX || h > MAX) {
-    const r = Math.min(MAX / w, MAX / h)
-    w = Math.round(w * r); h = Math.round(h * r)
+  try {
+    let out = await imageCompression(file, opts)
+    // Si le résultat dépasse encore 150 Ko, on retente plus agressivement.
+    if (out.size > 150 * 1024) {
+      out = await imageCompression(file, { ...opts, initialQuality: 0.6, maxSizeMB: 0.13 })
+    }
+    return new File([out], 'photo.webp', { type: 'image/webp' })
+  } catch {
+    throw new Error("Compression impossible — essayez un JPG ou un PNG plus petit.")
   }
-  const canvas = document.createElement('canvas')
-  canvas.width = w; canvas.height = h
-  canvas.getContext('2d').drawImage(source, 0, 0, w, h)
-  let blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.92))
-  let ext = 'webp', type = 'image/webp'
-  if (!blob) { // Très vieux navigateur sans export WebP -> JPEG.
-    blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92))
-    ext = 'jpg'; type = 'image/jpeg'
-  }
-  if (bitmap && bitmap.close) bitmap.close()
-  if (!blob) throw new Error("Conversion impossible — essayez un JPG ou un PNG.")
-  return new File([blob], `photo.${ext}`, { type })
 }
 
 function ImageField({ value, onChange, productId, categoryId, label = 'Image du produit' }) {
@@ -725,14 +740,9 @@ function ImageField({ value, onChange, productId, categoryId, label = 'Image du 
     if (!file) return
     setUploading(true)
     try {
-      let toSend = file
-      const STANDARD = ['image/png', 'image/jpeg', 'image/webp']
-      // HEIC/HEIF (photos iPhone) ou fichier trop lourd : on normalise côté client
-      // (conversion WebP + orientation + redimensionnement), sinon l'upload échoue
-      // (le serveur ne lit pas le HEIC et bloque les fichiers de plus de 12 Mo).
-      if (!STANDARD.includes(file.type) || file.size > 12 * 1024 * 1024) {
-        toSend = await normalizeImage(file)
-      }
+      // Compression systématique côté client (HEIC iPhone, JPEG, PNG...) -> WebP léger
+      // (< 150 Ko, max 1200px). Réduit l'usage de Firebase Storage et les téléchargements.
+      const toSend = await normalizeImage(file)
       const fd = new FormData()
       fd.append('file', toSend)
       fd.append('id', categoryId || productId || '')

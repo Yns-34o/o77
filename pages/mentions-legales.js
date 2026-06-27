@@ -68,8 +68,9 @@ export default function MentionsLegales({ legal, missing }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const config = await getSiteConfig()
   const legal = resolveLegal(config)
-  return { props: { legal, missing: missingLegalFields(legal) } }
+  // ISR : pages légales régénérées au max toutes les heures + à la demande (config).
+  return { props: { legal, missing: missingLegalFields(legal) }, revalidate: 3600 }
 }

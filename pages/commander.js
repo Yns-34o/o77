@@ -84,9 +84,10 @@ export default function Commander({ products, delivery, platformCount }) {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { products, config } = await getMenu()
   const delivery = config?.delivery || {}
   const platformCount = ['deliveroo', 'ubereats', 'justeat'].filter((k) => delivery[k]).length
-  return { props: { products, delivery, platformCount } }
+  // ISR : régénération au max toutes les 10 min + à la demande après modif dashboard.
+  return { props: { products, delivery, platformCount }, revalidate: 600 }
 }

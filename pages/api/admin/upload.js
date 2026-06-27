@@ -4,13 +4,10 @@ import { bucket } from '@/lib/firebase-admin'
 import { checkAuth } from '@/lib/auth-session'
 
 // Upload d'une image (produit OU catégorie) -> Firebase Storage.
-// Objectif : qualité maximale SANS altérer le contenu (pas de crop, pas de filtre
-// artistique). On préserve/améliore seulement la définition :
-//   - rotation EXIF (orientation correcte des photos de téléphone)
-//   - qualité WebP 95 (quasi sans perte visuelle)
-//   - résolution préservée : grand côté plafonné à 2000px (au lieu de 1000 avant)
-//   - UPSCALE x2 des petites images (< 900px) au noyau Lanczos3 + sharpen léger,
-//     pour gagner en netteté perçue même sur une photo prise sur le moment.
+// La compression principale se fait côté client (browser-image-compression : WebP
+// ≤ 1200px / ~150 Ko). Ici, simple filet de sécurité : on ne ré-encode QUE si
+// l'image arrive dans un autre format ou plus large que 1200px (rotation EXIF incluse),
+// afin d'éviter une double compression destructrice quand le client a déjà fait le travail.
 //
 // POST multipart/form-data :
 //   - file : l'image (obligatoire)
@@ -21,8 +18,7 @@ export const config = { api: { bodyParser: false } }
 
 const ALLOWED = new Set(['image/png', 'image/jpeg', 'image/webp'])
 const MAX_BYTES = 12 * 1024 * 1024 // 12 Mo (tolérance : on ré-encode ensuite)
-const MAX_DIM = 2000              // dimension maximale de sortie (grand côté)
-const UPSCALE_BELOW = 900         // en dessous : on agrandit x2 (jusqu'à ~1800)
+const MAX_DIM = 1200               // grand côté max (la compression client vise déjà 1200px)
 
 // Parse multipart -> { file: { buffer, mimeType, size }, id, kind }
 function parseMultipart(req) {
@@ -62,22 +58,18 @@ export default async function handler(req, res) {
     if (!file) return res.status(400).json({ error: 'Aucun fichier reçu' })
     if (!ALLOWED.has(file.mimeType)) return res.status(415).json({ error: 'Format non supporté (PNG, JPG ou WebP uniquement)' })
 
-    // Décide du resize/upscale selon la résolution source.
+    // Filet de sécurité : on ne ré-encode que si le format n'est pas du WebP ou si
+    // l'image dépasse 1200px de large (cas d'un contournement de la compression client).
     const meta = await sharp(file.buffer).metadata()
     const w = meta.width || 0
-    let pipeline = sharp(file.buffer).rotate() // orientation EXIF corrigée
-    if (w > 0 && w < UPSCALE_BELOW) {
-      // Petite photo : on augmente la définition x2 (Lanczos3) sans dépasser MAX_DIM.
-      pipeline = pipeline.resize({ width: Math.min(MAX_DIM, w * 2), kernel: 'lanczos3' })
-    } else if (w > MAX_DIM) {
-      // Grande image : on plafonne (sans agrandir) pour rester raisonnable.
-      pipeline = pipeline.resize(MAX_DIM, MAX_DIM, { fit: 'inside', withoutEnlargement: true })
+    let optimized = file.buffer
+    if (file.mimeType !== 'image/webp' || w > MAX_DIM) {
+      let pipeline = sharp(file.buffer).rotate() // orientation EXIF corrigée
+      if (w > MAX_DIM) {
+        pipeline = pipeline.resize(MAX_DIM, MAX_DIM, { fit: 'inside', withoutEnlargement: true })
+      }
+      optimized = await pipeline.webp({ quality: 80 }).toBuffer()
     }
-
-    const optimized = await pipeline
-      .sharpen({ sigma: 0.6 })  // netteté perçue (compense le resize/upscale)
-      .webp({ quality: 95 })    // qualité maximale, quasi sans perte
-      .toBuffer()
 
     const folder = kind === 'category' ? 'categories' : 'products'
     const slug = (id || (kind === 'category' ? 'cat' : 'prod')).toString().replace(/[^a-z0-9-]/gi, '-').toLowerCase().slice(0, 40)
