@@ -14,4 +14,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://o77-pontault-combault.fr/sitemap.xml
+Sitemap: https://o77.fr/sitemap.xml
