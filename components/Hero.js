@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import OrderButton from './OrderButton'
+import { RESTAURANT } from '@/lib/constants'
 
 // Hero de la page d'accueil — texte piloté par la config (dashboard > Infos).
 export default function Hero({ config }) {
@@ -8,6 +9,8 @@ export default function Hero({ config }) {
   const title = hero.title || 'LE GOÛT QUI DÉCHIRE'
   const subtitle = hero.subtitle || "Pizzas fait maison, sandwichs qui tuent, naans dorés. Ouvert 7j/7 jusqu'à 1h du mat'."
   const slogan = config?.slogan || "O'77 par nous, pour vous !"
+  const tel = config?.phone || RESTAURANT.phone
+  const telHref = 'tel:' + tel.replace(/\s+/g, '')
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'flex-end', paddingBottom: 80 }}>
@@ -34,9 +37,12 @@ export default function Hero({ config }) {
           <p className="anim-up anim-d2" style={{ color: '#FFD600', fontFamily: 'Oswald', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 32 }}>
             « {slogan} »
           </p>
+          <a href={telHref} className="anim-up anim-d3" style={{ display: 'inline-flex', alignItems: 'center', gap: 14, background: '#FFD600', color: '#000', fontFamily: 'Oswald', fontWeight: 700, fontSize: '1.5rem', padding: '16px 28px', borderRadius: 10, textDecoration: 'none', marginBottom: 16, boxShadow: '0 10px 30px rgba(255,214,0,0.35)' }}>
+            <span style={{ fontSize: '1.6rem' }}>📞</span> {tel}
+          </a>
           <div className="anim-up anim-d3" style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-            <Link href="/carte" className="btn-jaune">Voir la carte</Link>
-            <OrderButton delivery={config?.delivery} className="btn-outline" label="Commander" />
+            <Link href="/carte" className="btn-outline">Voir la carte</Link>
+            <OrderButton delivery={config?.delivery} className="btn-jaune" label="Commander" />
           </div>
         </div>
       </div>

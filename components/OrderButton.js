@@ -21,11 +21,8 @@ export default function OrderButton({ delivery = {}, className = 'btn-jaune', la
     .filter((p) => p.url)
 
   if (platforms.length === 0) {
-    return (
-      <span className={className} style={{ opacity: 0.5, cursor: 'not-allowed', ...(style || {}) }} aria-disabled="true" title="Aucune plateforme de livraison configurée pour le moment">
-        {disabledLabel}
-      </span>
-    )
+    // Aucune plateforme configurée -> le bouton disparaît (au lieu d'un libellé désactivé).
+    return null
   }
 
   if (platforms.length === 1) {

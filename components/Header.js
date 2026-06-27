@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { NAV_LINKS } from '@/lib/constants'
+import { NAV_LINKS, RESTAURANT } from '@/lib/constants'
 import OrderButton from './OrderButton'
 import { useConfig } from '@/context/ConfigContext'
 
@@ -34,6 +34,10 @@ export default function Header() {
   }
 
   const close = () => setMenuOpen(false)
+  const tel = config?.phone || RESTAURANT.phone
+  const telHref = 'tel:' + tel.replace(/\s+/g, '')
+  const delivery = config?.delivery || {}
+  const hasDelivery = !!(delivery.deliveroo || delivery.ubereats || delivery.justeat)
 
   return (
     <>
@@ -49,15 +53,15 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
-            {!config ? (
-              <Link href="/commander" className="btn-jaune" style={{ fontSize: '0.75rem', padding: '10px 24px' }}>
-                Commander
-              </Link>
-            ) : (
+            <a href={telHref} style={{ fontSize: '0.8rem', fontWeight: 700, fontFamily: 'Oswald', color: '#FFD600', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6, letterSpacing: '0.02em' }}>
+              📞 {tel}
+            </a>
+            {config && hasDelivery && (
               <OrderButton delivery={config.delivery} className="btn-jaune" label="Commander" style={{ fontSize: '0.75rem', padding: '10px 24px' }} />
             )}
           </nav>
 
+          <a href={telHref} className="mob-phone" aria-label="Appeler le restaurant" style={{ color: '#FFD600', textDecoration: 'none', fontSize: 22, display: 'inline-flex', alignItems: 'center' }}>📞</a>
           <button className="mob-btn" onClick={() => setMenuOpen(true)} aria-label="Ouvrir le menu" style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 24 }}>
             ☰
           </button>
@@ -73,7 +77,8 @@ export default function Header() {
           </Link>
         ))}
         <div style={{ width: 60, height: 2, background: '#FFD600', margin: '8px 0' }} />
-        <Link href="/commander" onClick={close} className="btn-jaune">Commander</Link>
+        <a href={telHref} onClick={close} style={{ fontFamily: 'Oswald', fontSize: '1.8rem', color: '#FFD600', letterSpacing: '0.06em', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 12 }}>📞 {tel}</a>
+        {hasDelivery && <Link href="/commander" onClick={close} className="btn-jaune">Commander</Link>}
       </div>
     </>
   )
