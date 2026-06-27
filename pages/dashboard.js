@@ -149,9 +149,9 @@ function DashboardApp({ adminEmail }) {
 // Legacy (produits sans `prices`) -> 1 ligne à partir de `price`.
 function toEditingPrices(p) {
   if (Array.isArray(p.prices) && p.prices.length) {
-    return p.prices.map((l) => ({ label: l.label || '', price: String(l.price ?? '') }))
+    return p.prices.map((l) => ({ label: l.label || '', price: String(l.price ?? ''), salePrice: l.salePrice != null ? String(l.salePrice) : '', salePercent: l.salePercent != null ? String(l.salePercent) : '' }))
   }
-  return [{ label: '', price: String(p.price ?? '') }]
+  return [{ label: '', price: String(p.price ?? ''), salePrice: '', salePercent: '' }]
 }
 
 function ProduitsTab({ data, reload }) {
@@ -159,15 +159,24 @@ function ProduitsTab({ data, reload }) {
   const cats = data.categories || []
 
   function startNew() {
-    setEditing({ id: '', name: '', description: '', prices: [{ label: '', price: '' }], salePrice: '', saleActive: false, category: cats[0]?.id || '', image: '', badge: '', allergens: '', featured: false, active: true, sortOrder: 0 })
+    setEditing({ id: '', name: '', description: '', prices: [{ label: '', price: '', salePrice: '', salePercent: '' }], salePrice: '', saleActive: false, category: cats[0]?.id || '', image: '', badge: '', allergens: '', featured: false, active: true, sortOrder: 0 })
   }
 
   async function save() {
     // Régénère prices (nettoyé) + price/priceLabel dérivés.
-    const raw = (editing.prices || [{ label: '', price: '' }])
-      .map((l) => ({ label: (l.label || '').trim(), price: parseFloat(l.price) || 0 }))
+    // Chaque ligne peut porter une promo : salePrice (€) ou salePercent (%).
+    const src = editing.prices && editing.prices.length ? editing.prices : [{ label: '', price: '' }]
+    const raw = src
+      .map((l) => ({
+        label: (l.label || '').trim(),
+        price: parseFloat(l.price) || 0,
+        salePrice: l.salePrice !== '' && l.salePrice != null ? parseFloat(l.salePrice) : null,
+        salePercent: l.salePercent !== '' && l.salePercent != null ? parseFloat(l.salePercent) : null,
+      }))
       .filter((l) => l.price > 0 || l.label)
-    const prices = raw.length ? raw : [{ label: '', price: 0 }]
+    const prices = raw.length ? raw : [{ label: '', price: 0, salePrice: null, salePercent: null }]
+    // Multi-tailles = plusieurs lignes, ou une ligne avec libellé.
+    const hasSizes = prices.length > 1 || (prices[0] && prices[0].label)
     const p = {
       id: editing.id || undefined,
       name: editing.name,
@@ -175,8 +184,10 @@ function ProduitsTab({ data, reload }) {
       prices,
       price: pricesToBase(prices),
       priceLabel: pricesToLabel(prices),
-      salePrice: editing.salePrice !== '' && editing.salePrice != null ? parseFloat(editing.salePrice) : null,
-      saleActive: !!editing.saleActive,
+      // Multi-tailles : la promo vit dans chaque ligne (salePrice/salePercent).
+      // On neutralise alors l'ancien champ produit, réservé au prix simple.
+      salePrice: hasSizes ? null : (editing.salePrice !== '' && editing.salePrice != null ? parseFloat(editing.salePrice) : null),
+      saleActive: hasSizes ? false : !!editing.saleActive,
       category: editing.category,
       image: editing.image,
       badge: editing.badge || null,
@@ -202,6 +213,10 @@ function ProduitsTab({ data, reload }) {
   const products = data.products || []
   const catsSorted = cats.slice().sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
   const orphans = products.filter((p) => !cats.find((c) => c.id === p.category))
+  // Multi-tailles = plusieurs lignes de prix, ou une ligne avec libellé.
+  // Dans ce cas la promo se saisit par ligne (PricesEditor), pas via le champ unique.
+  const editingPrices = (editing && editing.prices) || []
+  const hasSizes = editingPrices.length > 1 || (editingPrices[0] && !!editingPrices[0].label)
 
   // Rendu d'une ligne produit (réutilisé dans chaque section).
   const row = (p) => (
@@ -256,14 +271,14 @@ function ProduitsTab({ data, reload }) {
           </Field>
           <PricesEditor prices={editing.prices} setPrices={(prices) => setEditing({ ...editing, prices })} />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <Field label="Prix soldé (€) — laisser vide sinon"><input className="form-input" type="number" step="0.01" value={editing.salePrice} onChange={(e) => setEditing({ ...editing, salePrice: e.target.value })} /></Field>
+            {!hasSizes && <Field label="Prix soldé (€) — laisser vide sinon"><input className="form-input" type="number" step="0.01" value={editing.salePrice} onChange={(e) => setEditing({ ...editing, salePrice: e.target.value })} /></Field>}
             <Field label="Badge (ex: 🔥 Best)"><input className="form-input" value={editing.badge || ''} onChange={(e) => setEditing({ ...editing, badge: e.target.value })} /></Field>
           </div>
           <ImageField value={editing.image} onChange={(v) => setEditing({ ...editing, image: v })} productId={editing.id} />
           <Field label="Allergènes (séparés par des virgules)"><input className="form-input" value={editing.allergens} onChange={(e) => setEditing({ ...editing, allergens: e.target.value })} style={inputStyle} /></Field>
           <Field label="Ordre (tri)"><input className="form-input" type="number" value={editing.sortOrder} onChange={(e) => setEditing({ ...editing, sortOrder: e.target.value })} style={inputStyle} /></Field>
           <div style={{ display: 'flex', gap: 20, margin: '12px 0 20px' }}>
-            <Check label="En soldes" checked={editing.saleActive} onChange={(v) => setEditing({ ...editing, saleActive: v })} />
+            {!hasSizes && <Check label="En soldes" checked={editing.saleActive} onChange={(v) => setEditing({ ...editing, saleActive: v })} />}
             <Check label="Mis en avant (accueil)" checked={editing.featured} onChange={(v) => setEditing({ ...editing, featured: v })} />
             <Check label="Visible sur le site" checked={editing.active} onChange={(v) => setEditing({ ...editing, active: v })} />
           </div>
@@ -500,6 +515,8 @@ function InfosTab({ data, reload }) {
         <Field label="TikTok (URL)"><input className="form-input" value={(cfg.social && cfg.social.tiktok) || ''} onChange={(e) => setDeep('social', 'tiktok', e.target.value)} /></Field>
         <Field label="Snapchat (URL)"><input className="form-input" value={(cfg.social && cfg.social.snapchat) || ''} onChange={(e) => setDeep('social', 'snapchat', e.target.value)} /></Field>
         <Field label="Facebook (URL)"><input className="form-input" value={(cfg.social && cfg.social.facebook) || ''} onChange={(e) => setDeep('social', 'facebook', e.target.value)} /></Field>
+        <Field label="The Fork (URL)"><input className="form-input" value={(cfg.social && cfg.social.thefork) || ''} onChange={(e) => setDeep('social', 'thefork', e.target.value)} placeholder="https://www.thefork.fr/…" /></Field>
+        <Field label="Tripadvisor (URL)"><input className="form-input" value={(cfg.social && cfg.social.tripadvisor) || ''} onChange={(e) => setDeep('social', 'tripadvisor', e.target.value)} placeholder="https://www.tripadvisor.fr/…" /></Field>
       </div>
 
       <SectionTitle title="Mentions légales (à compléter)" />
@@ -618,23 +635,37 @@ function Field({ label, children }) {
 // Éditeur de prix par tailles/formules : liste de lignes (libellé + prix).
 // 1 ligne sans libellé = prix simple ; plusieurs lignes = multi-tailles (J/S/M, Seul/Menu, M/L/XL…).
 function PricesEditor({ prices, setPrices }) {
-  const lines = Array.isArray(prices) && prices.length ? prices : [{ label: '', price: '' }]
+  const blank = () => ({ label: '', price: '', salePrice: '', salePercent: '' })
+  const lines = Array.isArray(prices) && prices.length ? prices : [blank()]
   const update = (i, field, val) => setPrices(lines.map((l, idx) => (idx === i ? { ...l, [field]: val } : l)))
-  const add = () => setPrices([...lines, { label: '', price: '' }])
+  // Promo par ligne : saisir € OU % — l'un efface l'autre (exclusif par taille).
+  const setSale = (i, field, val) =>
+    setPrices(lines.map((l, idx) => (idx === i ? { ...l, [field]: val, ...(field === 'salePrice' ? { salePercent: '' } : { salePrice: '' }) } : l)))
+  const add = () => setPrices([...lines, blank()])
   const remove = (i) => setPrices(lines.length > 1 ? lines.filter((_, idx) => idx !== i) : lines)
-  const multi = lines.length > 1
+  // Multi-tailles = plusieurs lignes, ou une ligne avec libellé (ex : « Menu 10€ »).
+  const multi = lines.length > 1 || (lines.length === 1 && !!lines[0].label)
   return (
     <div style={{ marginBottom: 12 }}>
       <label style={lbl}>Prix {multi ? '(une ligne par taille / formule)' : '(€)'}</label>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {lines.map((l, i) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 130px auto', gap: 8 }}>
-            <input className="form-input" value={l.label || ''} onChange={(e) => update(i, 'label', e.target.value)} placeholder={multi ? 'Taille/formule (ex : J, M, XL — Seul…)' : 'Laisser vide si prix unique'} />
-            <input className="form-input" type="number" step="0.01" value={l.price} onChange={(e) => update(i, 'price', e.target.value)} placeholder="Prix €" />
-            <button type="button" onClick={() => remove(i)} style={{ ...miniBtn, color: '#f87171' }} disabled={lines.length <= 1} aria-label="Supprimer la ligne">✕</button>
+          <div key={i}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px auto', gap: 8 }}>
+              <input className="form-input" value={l.label || ''} onChange={(e) => update(i, 'label', e.target.value)} placeholder={multi ? 'Taille/formule (ex : J, M, XL — Seul…)' : 'Laisser vide si prix unique'} />
+              <input className="form-input" type="number" step="0.01" value={l.price} onChange={(e) => update(i, 'price', e.target.value)} placeholder="Prix €" />
+              <button type="button" onClick={() => remove(i)} style={{ ...miniBtn, color: '#f87171' }} disabled={lines.length <= 1} aria-label="Supprimer la ligne">✕</button>
+            </div>
+            {multi && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 6 }}>
+                <input className="form-input" type="number" step="0.01" value={l.salePrice || ''} onChange={(e) => setSale(i, 'salePrice', e.target.value)} placeholder="Promo € (ex : 7)" />
+                <input className="form-input" type="number" step="1" min="0" max="99" value={l.salePercent || ''} onChange={(e) => setSale(i, 'salePercent', e.target.value)} placeholder="Promo % (ex : 20)" />
+              </div>
+            )}
           </div>
         ))}
       </div>
+      {multi && <p style={{ color: '#666', fontSize: '0.7rem', margin: '6px 2px 0' }}>💡 Par taille, remplissez « Promo € » <strong>ou</strong> « Promo % » (au choix). Laissez vide pour pas de promo sur cette taille.</p>}
       <button type="button" onClick={add} className="btn-outline" style={{ fontSize: '0.7rem', padding: '6px 14px', marginTop: 8 }}>+ Ajouter une taille / formule</button>
     </div>
   )

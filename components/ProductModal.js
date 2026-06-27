@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { priceDisplay, priceSale } from '@/lib/format'
+import { priceDisplay, priceSale, hasSizeSales, pricedLines, fmtP } from '@/lib/format'
 import CategoryIcon from './CategoryIcon'
 
 const CAT_LABELS = {
@@ -28,6 +28,7 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null
   const sale = priceSale(product) // {old,now} si promo, sinon null
+  const sizeLines = hasSizeSales(product) ? pricedLines(product) : null // promos par taille
 
   return (
     <div className="modal-bg open" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
@@ -60,6 +61,22 @@ export default function ProductModal({ product, onClose }) {
                   <span style={{ color: '#555', textDecoration: 'line-through', fontSize: '1.2rem' }}>{sale.old}</span>
                   {sale.now}
                 </>
+              ) : sizeLines ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '1.25rem' }}>
+                  {sizeLines.map((l, i) => (
+                    <span key={i} style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
+                      {l.label && <span style={{ color: '#888', fontSize: '0.9rem', minWidth: 28 }}>{l.label}</span>}
+                      {l.hasSale ? (
+                        <>
+                          <s style={{ color: '#555', fontSize: '1rem' }}>{fmtP(l.old)}</s>
+                          {fmtP(l.sale)}
+                        </>
+                      ) : (
+                        <span>{fmtP(l.old)}</span>
+                      )}
+                    </span>
+                  ))}
+                </div>
               ) : priceDisplay(product)}
             </div>
 

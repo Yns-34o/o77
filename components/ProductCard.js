@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Flame } from 'lucide-react'
-import { priceDisplay, priceSale } from '@/lib/format'
+import { priceDisplay, priceSale, hasSizeSales, pricedLines, fmtP } from '@/lib/format'
 import CategoryIcon from './CategoryIcon'
 
 // Carte produit premium — clic => ouvre la modale détail.
@@ -12,6 +12,7 @@ import CategoryIcon from './CategoryIcon'
 export default function ProductCard({ product, index = 0, onOpen, displayOnly = false }) {
   const [imgError, setImgError] = useState(false)
   const sale = priceSale(product) // {old,now} si promo, sinon null
+  const sizeLines = hasSizeSales(product) ? pricedLines(product) : null // promos par taille
 
   return (
     <article
@@ -51,6 +52,7 @@ export default function ProductCard({ product, index = 0, onOpen, displayOnly = 
         )}
 
         {sale && <span className="product-card__deal">PROMO</span>}
+        {!sale && sizeLines && <span className="product-card__deal">PROMO</span>}
 
         {!displayOnly && <span className="product-card__view">Voir le plat →</span>}
       </div>
@@ -66,6 +68,22 @@ export default function ProductCard({ product, index = 0, onOpen, displayOnly = 
                 <span className="product-card__price-old">{sale.old}</span>
                 <span className="product-card__price-now">{sale.now}</span>
               </>
+            ) : sizeLines ? (
+              <span className="product-card__price-now product-card__price-now--label">
+                {sizeLines.map((l, i) => (
+                  <span key={i}>
+                    {i > 0 && ' · '}
+                    {l.label && `${l.label} `}
+                    {l.hasSale ? (
+                      <>
+                        <s style={{ color: '#555' }}>{fmtP(l.old)}</s> {fmtP(l.sale)}
+                      </>
+                    ) : (
+                      fmtP(l.old)
+                    )}
+                  </span>
+                ))}
+              </span>
             ) : (
               <span className={`product-card__price-now${product.priceLabel ? ' product-card__price-now--label' : ''}`}>{priceDisplay(product)}</span>
             )}
